@@ -1,0 +1,84 @@
+openapi: 3.0.0
+info:
+  description: |-
+    The API exposing the endpoints of the userapp application to the user.
+  title: Register User
+  version: 1.0.0
+
+servers:
+  - url: '{protocol}://{hostname}/api'
+    description: Endpoint backend API
+    variables:
+      protocol:
+        default: 'http'
+      hostname:
+        default: 'localhost:8080'
+
+paths:
+  /login:
+    get:
+      tags: [Login]
+      summary: Get login page
+      operationId: getLoginPage
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+
+  /register:
+    get:
+      tags: [Register]
+      summary: Register page
+      operationId: getRegisterPage
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+
+    post:
+      tags: [Register]
+      summary: Send to this endpoint new user data
+      operationId: submission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+
+      responses:
+        '200':
+          description: User saved
+          content:
+            text/plain:
+              schema:
+                type: string
+
+        '400':
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+
+components:
+  schemas:
+    NewUser:
+      title: User
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        secondPassword:
+          type: string
