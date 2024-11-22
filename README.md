@@ -28,9 +28,6 @@ This repository showcases a full-stack
 |------|-------|
 | ![image-info](./img/register_dark.png) | ![image-info](./img/register_light.png) 
 
-### Dashboard
-
-
 ## Installation and Usage
 ### Prerequisites
 - Node.js (>= 16.0)
