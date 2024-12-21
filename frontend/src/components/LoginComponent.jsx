@@ -15,6 +15,7 @@ const LoginComponent = () => {
         try {
             const response = await axiosConfig.login({ username, password });
             if (response.status === 200) {
+                localStorage.setItem("username", username);
                 navigate("/home");
             }
         } catch (error) {

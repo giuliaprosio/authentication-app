@@ -43,8 +43,26 @@ const axiosConfig = {
 
     async register(user) {
         return instance.post("/api/register", user, {
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
         });
+    },
+
+    async connect(username) {
+        const formData = new FormData(); 
+        formData.append('username', username);
+        return instance.post("/api/home/connect",
+            formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+        });
+    },
+
+    async redirect(params) {
+        const formData = new FormData(); 
+        Object.entries(params).forEach(([KeyboardEvent, value]) => formData.append(KeyboardEvent, value)); 
+
+        return instance.post("/api/home/redirect", formData, {
+            headers: {"Content-Type": "multipart/form-data"},
+        }); 
     },
 
     async request(endpoint, method = "get", data = {}) {
