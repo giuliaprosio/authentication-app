@@ -56,9 +56,11 @@
 
 .btn-toggle-mode {
   margin-bottom: 20px;
-  background-color: rgba(29, 185, 84, 0.7); /* Spotify green */
+  background-color: #1db954; /* Spotify green */
   border-radius: 20px;
   padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold; 
   backdrop-filter: blur(10px);
   color: white;
   border: 1px solid rgba(29, 185, 84, 0.4);
@@ -125,6 +127,31 @@ div.card-header.text-center {
   color: #1db954;
 }
 
+.btn-connect {
+  margin-top: 240px;
+  margin-bottom: 20px;
+  background-color: #1db954; /* Spotify green */
+  border-radius: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold; 
+  backdrop-filter: blur(10px);
+  color: white;
+  border: 1px solid rgba(29, 185, 84, 0.4);
+  transition: background 0.3s ease;
+}
+
+.btn-connect img {
+  height: 40px;
+  
+}
+
+.btn-connect:hover {
+  background: rgba(29, 185, 84, 0.5);
+  border-color: rgba(255, 255, 255, 0.8);
+  color: white;
+}
+
 .btn-login {
   background-color: #1db954; /* Spotify green */
   border: none;
@@ -166,11 +193,9 @@ div.card-header.text-center {
     box-shadow: none; 
   }
   
-  .btn-login {
-    padding: 10px 15px;
-  }
-  
   .form-group label {
     font-size: 14px;
   }
 }
+
+
