@@ -29,6 +29,12 @@ public class User implements UserDetails {
     @NotNull
     private String password;
 
+    @Column
+    private String refreshToken;
+
+    @Column
+    private String accessToken;
+
     public String getUsername() {
         return username;
     }
@@ -51,6 +57,18 @@ public class User implements UserDetails {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public String getAccessToken() {return accessToken; }
+
+    public void setAccessToken(String accessToken) {this.accessToken = accessToken;}
+
+    public void setRefreshToken(String refresh_token) {
+        this.refreshToken = refresh_token;
     }
 
     @Override

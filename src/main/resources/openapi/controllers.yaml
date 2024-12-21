@@ -1,0 +1,202 @@
+openapi: 3.0.0
+info:
+  description: |-
+    The API exposing the endpoints of the userapp application to the user.
+  title: Register User
+  version: 1.0.0
+
+servers:
+  - url: '{protocol}://{hostname}/api'
+    description: Endpoint backend API
+    variables:
+      protocol:
+        default: 'http'
+      hostname:
+        default: 'localhost:8080'
+
+paths:
+  /login:
+    get:
+      tags: [Login]
+      summary: Get login page
+      operationId: getLoginPage
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+
+  /register:
+    get:
+      tags: [Register]
+      summary: Register page
+      operationId: getRegisterPage
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+
+    post:
+      tags: [Register]
+      summary: Send to this endpoint new user data
+      operationId: submission
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewUser'
+
+      responses:
+        '200':
+          description: User saved
+          content:
+            text/plain:
+              schema:
+                type: string
+
+        '400':
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+  /home/connect:
+    post:
+      tags: [Connect]
+      summary: Connect to Spotify
+      operationId: getSpotifyAuthorize
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+        '400':
+          description: User Error
+
+        '500':
+          description: Internal Error
+  /home/redirect:
+    post:
+      tags: [Connect]
+      summary: Returns code for connected Spotify account
+      operationId: getAuthorizationCode
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+                state:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+
+
+components:
+  schemas:
+    NewUser:
+      title: User
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        secondPassword:
+          type: string
+
+    TopArtistSpotifyResponse:
+      type: object
+      properties:
+        href:
+          type: string
+        limit:
+          type: integer
+        next:
+          type: string
+        offset:
+          type: integer
+        previous:
+          type: string
+        total:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Artist'
+
+    Artist:
+      type: object
+      properties:
+        external_urls:
+          type: object
+          properties:
+            spotify:
+              type: string
+        followers:
+          type: object
+          properties:
+            href:
+              type: string
+            total:
+              type: integer
+        genres:
+          type: array
+          items:
+            type: string
+        href:
+          type: string
+        id:
+          type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/Image'
+        name:
+          type: string
+        popularity:
+          type: integer
+        type:
+          type: string
+        uri:
+          type: string
+
+    Image:
+      type: object
+      properties:
+        url:
+          type: string
+        height:
+          type: integer
+        width:
+          type: integer
+

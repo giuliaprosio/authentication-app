@@ -90,6 +90,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Web Client-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
 		<!-- Open API -->
 		<dependency>
 			<groupId>org.openapitools</groupId>
@@ -112,6 +118,13 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<version>1.1.0.Final</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>4.0.1</version> <!-- Or the version compatible with your setup -->
+			<scope>provided</scope> <!-- Provided by the runtime container -->
 		</dependency>
 
 		<!-- Swagger Annotations -->
@@ -180,28 +193,31 @@
 				<artifactId>openapi-generator-maven-plugin</artifactId>
 				<version>5.0.0</version>
 				<executions>
+					<!-- Controller Code Generation -->
 					<execution>
 						<id>controllers</id>
 						<goals>
 							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<inputSpec>${project.basedir}/src/main/resources/controller/controllers.yaml</inputSpec>
+							<inputSpec>${project.basedir}/src/main/resources/openapi/controllers.yaml</inputSpec>
 							<generatorName>spring</generatorName>
 							<apiPackage>com.springapplication.userapp.controller.api</apiPackage>
 							<modelPackage>com.springapplication.userapp.controller.model</modelPackage>
-							<invokerPackage>com.springapplication.userapp.invoker</invokerPackage> <!-- Add this -->
-							<output>${project.build.directory}/generated-sources/openapi</output> <!-- Add this -->
+							<invokerPackage>com.springapplication.userapp.invoker</invokerPackage>
+							<output>${project.build.directory}/generated-sources/openapi</output>
 							<supportingFilesToGenerate>ApiUtils.java</supportingFilesToGenerate>
 							<modelNameSuffix>DTO</modelNameSuffix>
 							<configOptions>
 								<delegatePattern>true</delegatePattern>
 								<useSpringBoot3>true</useSpringBoot3>
+								<supportingFiles>false</supportingFiles>
 							</configOptions>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+
 
 		</plugins>
 	</build>

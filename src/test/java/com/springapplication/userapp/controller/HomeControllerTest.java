@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@WebMvcTest(controllers = {HomeController.class})
+@WebMvcTest(controllers = {com.springapplication.userapp.controller.api.HomeApiController.class, HomeController.class})
 @Import(HomeController.class)
 public class HomeControllerTest {
 
@@ -30,10 +30,11 @@ public class HomeControllerTest {
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
 
     private static final String ENDPOINT = "/api/home";
+    private static final String AUTH_ENDPOINT = "/api/home/connect";
 
     @Test
     @WithMockJwtAuth
-    public void GetHome_ReturnHome() throws Exception {
+    public void getHome_returnHome() throws Exception {
 
         MvcResult result = this.mockMvc
                 .perform(get(ENDPOINT))
@@ -43,7 +44,7 @@ public class HomeControllerTest {
     }
 
     @Test
-    public void GetHomeUnauthorized_Fails() throws Exception {
+    public void getHomeUnauthorized_fails() throws Exception {
 
         MvcResult result = this.mockMvc
                 .perform(get(ENDPOINT))
@@ -51,4 +52,15 @@ public class HomeControllerTest {
                 .andReturn();
     }
 
+    @Test
+    @WithMockJwtAuth
+    public void getConnectEndpoint_returnsValidAuthorizeUrl() throws Exception {
+
+        MvcResult result = this.mockMvc
+                .perform(get(AUTH_ENDPOINT))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        System.out.println(result);
+    }
 }
