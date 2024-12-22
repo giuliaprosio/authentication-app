@@ -206,12 +206,11 @@
 							<modelPackage>com.springapplication.userapp.controller.model</modelPackage>
 							<invokerPackage>com.springapplication.userapp.invoker</invokerPackage>
 							<output>${project.build.directory}/generated-sources/openapi</output>
-							<supportingFilesToGenerate>ApiUtils.java</supportingFilesToGenerate>
+							<supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
 							<modelNameSuffix>DTO</modelNameSuffix>
 							<configOptions>
 								<delegatePattern>true</delegatePattern>
 								<useSpringBoot3>true</useSpringBoot3>
-								<supportingFiles>false</supportingFiles>
 							</configOptions>
 						</configuration>
 					</execution>

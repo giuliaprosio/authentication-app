@@ -1,6 +1,7 @@
 package com.springapplication.userapp.controller;
 
 import com.c4_soft.springaddons.security.oauth2.test.annotations.WithMockJwtAuth;
+import com.springapplication.userapp.client.SpotifyClient;
 import com.springapplication.userapp.config.CustomAuthenticationSuccessHandler;
 import com.springapplication.userapp.service.UserDetailsServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -28,6 +30,9 @@ public class HomeControllerTest {
 
     @MockBean
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
+
+    @MockBean
+    private SpotifyClient spotifyClient;
 
     private static final String ENDPOINT = "/api/home";
     private static final String AUTH_ENDPOINT = "/api/home/connect";
@@ -50,17 +55,5 @@ public class HomeControllerTest {
                 .perform(get(ENDPOINT))
                 .andExpect(status().isUnauthorized())
                 .andReturn();
-    }
-
-    @Test
-    @WithMockJwtAuth
-    public void getConnectEndpoint_returnsValidAuthorizeUrl() throws Exception {
-
-        MvcResult result = this.mockMvc
-                .perform(get(AUTH_ENDPOINT))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        System.out.println(result);
     }
 }

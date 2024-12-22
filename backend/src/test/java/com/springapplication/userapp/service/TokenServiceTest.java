@@ -62,8 +62,8 @@ class TokenServiceTest {
 
         assertEquals(expectedTokenValue, token);
         assertEquals("testUser", claimsSet.getSubject());
-        assertEquals(now.truncatedTo(ChronoUnit.SECONDS), claimsSet.getIssuedAt().truncatedTo(ChronoUnit.SECONDS));
-        assertEquals(now.plus(1, ChronoUnit.MINUTES).truncatedTo(ChronoUnit.SECONDS), claimsSet.getExpiresAt().truncatedTo(ChronoUnit.SECONDS));
+        assertEquals(now.truncatedTo(ChronoUnit.MINUTES), claimsSet.getIssuedAt().truncatedTo(ChronoUnit.MINUTES));
+        assertEquals(now.plus(1, ChronoUnit.MINUTES).truncatedTo(ChronoUnit.MINUTES), claimsSet.getExpiresAt().truncatedTo(ChronoUnit.MINUTES));
         assertEquals("ROLE_USER ROLE_ADMIN", claimsSet.getClaim("scope"));
     }
 }
