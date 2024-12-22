@@ -16,17 +16,14 @@ This repository showcases a full-stack
 - A responsive **React frontend** bundled with **Vite** for optimal performance. 
 
 ## Demo 
-### Login Page
-
-| dark | light |
+Note: each page has a light-mode toggle
+### Login and Register Page
+| Login | Register |
 |------|-------|
-| ![image-info](./img/login_dark.png) | ![image-info](./img/login_light.png) 
-
-### Register Page
-
-| dark | light |
-|------|-------|
-| ![image-info](./img/register_dark.png) | ![image-info](./img/register_light.png) 
+|![image-info](./img/login_dark.png) | ![image-info](./img/register_dark.png) 
+### Spotify Analytics Page
+First example: 
+![image-info](./img/analytics.png)
 
 ## Installation and Usage
 ### Prerequisites
