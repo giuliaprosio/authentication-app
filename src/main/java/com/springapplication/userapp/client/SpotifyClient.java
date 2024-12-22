@@ -10,6 +10,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import com.springapplication.userapp.controller.model.TopArtistSpotifyResponseDTO;
+import com.springapplication.userapp.controller.model.TopTrackDTO;
 
 import java.util.Base64;
 
@@ -62,7 +63,7 @@ public class SpotifyClient {
         return response.getAccessToken();
     }
 
-    public String spotifyTopArtist(String accessToken) {
+    public TopTrackDTO spotifyTopArtist(String accessToken) {
         WebClient spotifyClient = clientBuilder.buildClient("https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=1&offset=0");
         String authHeader = "Bearer " + accessToken;
 
@@ -71,7 +72,22 @@ public class SpotifyClient {
                 .retrieve()
                 .bodyToMono(TopArtistSpotifyResponseDTO.class)
                 .block();
+        System.out.println(response);
 
-        return response.getItems().get(0).getName();
+
+        WebClient spotifyClient2 = clientBuilder.buildClient("https://api.spotify.com/v1/tracks/0pQskrTITgmCMyr85tb9qq");
+
+        var response2 = spotifyClient2.get()
+                .header("Authorization", authHeader)
+                .retrieve()
+                .bodyToMono(com.springapplication.userapp.controller.model.TotalObjectDTO.class)
+                .block();
+        System.out.println(response2);
+
+        var dto = new TopTrackDTO();
+        dto.setName(response.getItems().get(0).getName());
+        dto.setImg(response2.getAlbum().getImages().get(1).getUrl());
+        System.out.println(dto);
+        return dto;
     }
 }

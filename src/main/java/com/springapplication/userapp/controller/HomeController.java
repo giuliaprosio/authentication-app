@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.springapplication.userapp.controller.api.HomeApiDelegate;
+import com.springapplication.userapp.controller.model.TopTrackDTO;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -48,10 +49,10 @@ class HomeController implements HomeApiDelegate {
     }
 
     @Override
-    public ResponseEntity<String> getAuthorizationCode(String code, String state) {
+    public ResponseEntity<TopTrackDTO> getAuthorizationCode(String code, String state) {
         String accessToken = clientBuilder.spotifyAuthorizationClientBuilder(code, state, redirect_uri);
-        String topArtist = clientBuilder.spotifyTopArtist(accessToken);
-        return ResponseEntity.status(HttpStatus.OK).body(topArtist);
+        var topTrack = clientBuilder.spotifyTopArtist(accessToken);
+        return ResponseEntity.status(HttpStatus.OK).body(topTrack);
     }
 
 }

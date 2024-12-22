@@ -114,13 +114,20 @@ paths:
         '200':
           description: OK
           content:
-            text/plain:
+            application/json:
               schema:
-                type: string
+                $ref: '#/components/schemas/TopTrack'
 
 
 components:
   schemas:
+    TopTrack:
+      type: object
+      properties:
+        name:
+          type: string
+        img:
+          type: string
     NewUser:
       title: User
       type: object
@@ -180,7 +187,7 @@ components:
         images:
           type: array
           items:
-            $ref: '#/components/schemas/Image'
+            $ref: '#/components/schemas/ImageSimple'
         name:
           type: string
         popularity:
@@ -190,13 +197,123 @@ components:
         uri:
           type: string
 
-    Image:
+    TotalObject:
+      type: object
+      properties:
+        album:
+          $ref: '#/components/schemas/Album'
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtistSimple'
+        available_markets:
+          type: array
+          items:
+            type: string
+        disc_number:
+          type: string
+        duration_ms:
+          type: integer
+        explicit:
+          type: boolean
+        external_ids:
+          type: object
+          properties:
+            isrc:
+              type: string
+        external_urls:
+          type: object
+          properties:
+            spotify:
+              type: string
+        href:
+          type: string
+        id:
+          type: string
+        is_local:
+          type: boolean
+        name:
+          type: string
+        popularity:
+          type: integer
+        preview_url:
+          type: string
+          nullable: true
+        track_number:
+          type: integer
+        type:
+          type: string
+        uri:
+          type: string
+
+
+
+    Album:
+      type: object
+      properties:
+        album_type:
+          type: string
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtistSimple'
+        available_markets:
+          type: array
+          items:
+            type: string
+        externals_urls:
+          $ref: '#/components/schemas/ExternalUrlsSimple'
+        href:
+          type: string
+        id:
+          type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageSimple'
+        name:
+          type: string
+        release_date:
+          type: string
+        release_date_precision:
+          type: string
+        total_tracks:
+          type: integer
+        type:
+          type: string
+        uri:
+          type: string
+
+
+
+    ArtistSimple:
+      type: object
+      properties:
+        external_urls:
+          $ref: '#/components/schemas/ExternalUrlsSimple'
+        href:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        uri:
+          type: string
+
+    ExternalUrlsSimple:
+      type: object
+      properties:
+        spotify:
+          type: string
+
+    ImageSimple:
       type: object
       properties:
         url:
           type: string
-        height:
-          type: integer
         width:
           type: integer
-
+        height:
+          type: integer
