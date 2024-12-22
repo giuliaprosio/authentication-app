@@ -58,7 +58,7 @@ const axiosConfig = {
 
     async redirect(params) {
         const formData = new FormData(); 
-        Object.entries(params).forEach(([KeyboardEvent, value]) => formData.append(KeyboardEvent, value)); 
+        Object.entries(params).forEach(([key, value]) => formData.append(key, value)); 
 
         return instance.post("/api/home/redirect", formData, {
             headers: {"Content-Type": "multipart/form-data"},

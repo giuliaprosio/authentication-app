@@ -5,6 +5,7 @@ const HomeComponent = () => {
     const [isButtonVisible, setIsButtonVisible] = useState(true);
     const username = localStorage.getItem("username");
     const [message, setMessage] = useState(""); 
+    const [imageUrl, setImageUrl] = useState("");
 
     const handleConnect = async (e) => {
         e.preventDefault(); 
@@ -39,7 +40,9 @@ const HomeComponent = () => {
             try{
                 const response = await axiosConfig.redirect(params); 
                 if (response.status === 200) {
-                    setMessage("Top Track: " + response.data);
+                    console.log(response.data)
+                    setMessage("Top Track: " + response.data["name"]);
+                    setImageUrl(response.data["img"]);
                 }
             } catch (error) {
                 setMessage("An error occurred while processing the redirect.");
@@ -57,7 +60,16 @@ const HomeComponent = () => {
                 <button className="btn btn-connect" id="connectToSpotifty" onClick={handleConnect}>
                     <img src="src/img/spotify-logo-png-7069.png" alt="Logo" />
                     &emsp;Connect to Spotify</button> 
-                {message && <h4 className="response-message"> {message}</h4>}
+                    {message && (
+                        <div>
+                            <h4 className="response-message">{message}</h4>
+                        </div>
+                        )}
+                        {imageUrl && (
+                        <div>
+                            <img src={imageUrl} alt="Fetched Content" />
+                        </div>
+                        )}
             </div>
         </div>  
     )
