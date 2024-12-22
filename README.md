@@ -1,4 +1,4 @@
-# Authentication Application
+# Authentication and Spotify Analytics Application
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.0-green)
 ![React](https://img.shields.io/badge/React-18.0-blue)
 ![Vite](https://img.shields.io/badge/Vite-4.0-purple)
@@ -8,6 +8,7 @@
 ## Introduction
 This repository showcases a full-stack 
 **Registration and Authentication Application**, built with modern tools to deliver a secure and efficient user experience. It features a robust backend for user authentication and a sleek, responsive frontend interface.
+Once logged in, one can connect to their Spotify account and have a cool overview of their Spotify analytics!
 
 **Features at a glance**:
 - Secure registration and login using **Spring Boot** and **Spring Security**.
