@@ -85,14 +85,11 @@ paths:
                   type: string
       responses:
         '200':
-          description: OK
-          content:
-            text/plain:
-              schema:
-                type: string
+          description: OK - already authorized (no redirect needed)
+        '302':
+          description: Header with Location parameter to redirect user
         '400':
           description: User Error
-
         '500':
           description: Internal Error
   /home/redirect:
@@ -113,10 +110,24 @@ paths:
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TopTrack'
+  /home/spotify/data:
+    post:
+      summary: Get Spotify Data
+      operationId: getSpotifyData
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  type: string
+      responses:
+        '200':
+          description: OK
+
 
 
 components:
@@ -140,180 +151,3 @@ components:
           type: string
         secondPassword:
           type: string
-
-    TopArtistSpotifyResponse:
-      type: object
-      properties:
-        href:
-          type: string
-        limit:
-          type: integer
-        next:
-          type: string
-        offset:
-          type: integer
-        previous:
-          type: string
-        total:
-          type: integer
-        items:
-          type: array
-          items:
-            $ref: '#/components/schemas/Artist'
-
-    Artist:
-      type: object
-      properties:
-        external_urls:
-          type: object
-          properties:
-            spotify:
-              type: string
-        followers:
-          type: object
-          properties:
-            href:
-              type: string
-            total:
-              type: integer
-        genres:
-          type: array
-          items:
-            type: string
-        href:
-          type: string
-        id:
-          type: string
-        images:
-          type: array
-          items:
-            $ref: '#/components/schemas/ImageSimple'
-        name:
-          type: string
-        popularity:
-          type: integer
-        type:
-          type: string
-        uri:
-          type: string
-
-    TotalObject:
-      type: object
-      properties:
-        album:
-          $ref: '#/components/schemas/Album'
-        artists:
-          type: array
-          items:
-            $ref: '#/components/schemas/ArtistSimple'
-        available_markets:
-          type: array
-          items:
-            type: string
-        disc_number:
-          type: string
-        duration_ms:
-          type: integer
-        explicit:
-          type: boolean
-        external_ids:
-          type: object
-          properties:
-            isrc:
-              type: string
-        external_urls:
-          type: object
-          properties:
-            spotify:
-              type: string
-        href:
-          type: string
-        id:
-          type: string
-        is_local:
-          type: boolean
-        name:
-          type: string
-        popularity:
-          type: integer
-        preview_url:
-          type: string
-          nullable: true
-        track_number:
-          type: integer
-        type:
-          type: string
-        uri:
-          type: string
-
-
-
-    Album:
-      type: object
-      properties:
-        album_type:
-          type: string
-        artists:
-          type: array
-          items:
-            $ref: '#/components/schemas/ArtistSimple'
-        available_markets:
-          type: array
-          items:
-            type: string
-        externals_urls:
-          $ref: '#/components/schemas/ExternalUrlsSimple'
-        href:
-          type: string
-        id:
-          type: string
-        images:
-          type: array
-          items:
-            $ref: '#/components/schemas/ImageSimple'
-        name:
-          type: string
-        release_date:
-          type: string
-        release_date_precision:
-          type: string
-        total_tracks:
-          type: integer
-        type:
-          type: string
-        uri:
-          type: string
-
-
-
-    ArtistSimple:
-      type: object
-      properties:
-        external_urls:
-          $ref: '#/components/schemas/ExternalUrlsSimple'
-        href:
-          type: string
-        id:
-          type: string
-        name:
-          type: string
-        type:
-          type: string
-        uri:
-          type: string
-
-    ExternalUrlsSimple:
-      type: object
-      properties:
-        spotify:
-          type: string
-
-    ImageSimple:
-      type: object
-      properties:
-        url:
-          type: string
-        width:
-          type: integer
-        height:
-          type: integer
