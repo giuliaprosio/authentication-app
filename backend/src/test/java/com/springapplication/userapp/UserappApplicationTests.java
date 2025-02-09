@@ -11,8 +11,9 @@ import org.springframework.test.context.TestPropertySource;
 		"spring.datasource.password=root",
 		"spring.datasource.platform=mysql",
 		"spring.sql.init.mode=never", // Disable SQL initialization (no connection made)
-		"spring.jpa.hibernate.ddl-auto=none"  // Don't perform schema creation
-})
+		"spring.jpa.hibernate.ddl-auto=none",  // Don't perform schema creation
+		"spring.jpa.database-platform=org.hibernate.dialect.H2Dialect"
+		})
 class UserappApplicationTests {
 
 	@Test

@@ -1,0 +1,275 @@
+openapi: 3.0.0
+info:
+  description: |-
+    Client API to build REST calls to Spotify
+  title: Spotify Client Calls
+  version: 1.0.0
+
+servers:
+  - url: '{protocol}://{hostname}/api'
+    description: Endpoint client API
+    variables:
+      protocol:
+        default: 'https'
+      hostname:
+        default: 'accounts.spotify.com'
+
+paths:
+  '/api/token':
+    post:
+      tags: [Spotify Token]
+      summary: get Spotify access token on behalf of a client
+      operationId: getToken
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                grant_type:
+                  type: string
+                code:
+                  type: string
+                redirect_uri:
+                  type: string
+      responses:
+        '200':
+          description: Code granted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+        '404':
+          description: Not found
+  /top/tracks:
+    get:
+      tags: [Spotify Top Tracks]
+      summary: Get a user's top tracks
+      operationId: getTopTracks
+      parameters:
+        - name: Authorization
+          in: header
+          schema:
+            type: string
+          required: true
+        - name: time_range
+          in: query
+          schema:
+            type: string
+            example: medium_term
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          example: 1
+        - name: offset
+          in: query
+          schema:
+            type: integer
+          example: 0
+      responses:
+        '200':
+          description: Top tracks provided
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopTracksSpotifyResponse'
+
+
+
+components:
+  schemas:
+    AuthToken:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+        expires_in:
+          type: integer
+        refresh_token:
+          type: string
+        scope:
+          type: string
+
+    TopTracksSpotifyResponse:
+      type: object
+      properties:
+        href:
+          type: string
+        limit:
+          type: integer
+        next:
+          type: string
+        offset:
+          type: integer
+        previous:
+          type: string
+        total:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Artist'
+
+    Artist:
+      type: object
+      properties:
+        external_urls:
+          type: object
+          properties:
+            spotify:
+              type: string
+        followers:
+          type: object
+          properties:
+            href:
+              type: string
+            total:
+              type: integer
+        genres:
+          type: array
+          items:
+            type: string
+        href:
+          type: string
+        id:
+          type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageSimple'
+        name:
+          type: string
+        popularity:
+          type: integer
+        type:
+          type: string
+        uri:
+          type: string
+
+    TotalObject:
+      type: object
+      properties:
+        album:
+          $ref: '#/components/schemas/Album'
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtistSimple'
+        available_markets:
+          type: array
+          items:
+            type: string
+        disc_number:
+          type: string
+        duration_ms:
+          type: integer
+        explicit:
+          type: boolean
+        external_ids:
+          type: object
+          properties:
+            isrc:
+              type: string
+        external_urls:
+          type: object
+          properties:
+            spotify:
+              type: string
+        href:
+          type: string
+        id:
+          type: string
+        is_local:
+          type: boolean
+        name:
+          type: string
+        popularity:
+          type: integer
+        preview_url:
+          type: string
+          nullable: true
+        track_number:
+          type: integer
+        type:
+          type: string
+        uri:
+          type: string
+
+
+
+    Album:
+      type: object
+      properties:
+        album_type:
+          type: string
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtistSimple'
+        available_markets:
+          type: array
+          items:
+            type: string
+        externals_urls:
+          $ref: '#/components/schemas/ExternalUrlsSimple'
+        href:
+          type: string
+        id:
+          type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageSimple'
+        name:
+          type: string
+        release_date:
+          type: string
+        release_date_precision:
+          type: string
+        total_tracks:
+          type: integer
+        type:
+          type: string
+        uri:
+          type: string
+
+    ArtistSimple:
+      type: object
+      properties:
+        external_urls:
+          $ref: '#/components/schemas/ExternalUrlsSimple'
+        href:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+        uri:
+          type: string
+
+    ExternalUrlsSimple:
+      type: object
+      properties:
+        spotify:
+          type: string
+
+    ImageSimple:
+      type: object
+      properties:
+        url:
+          type: string
+        width:
+          type: integer
+        height:
+          type: integer

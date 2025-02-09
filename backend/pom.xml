@@ -28,6 +28,11 @@
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
 
@@ -210,6 +215,26 @@
 							<modelNameSuffix>DTO</modelNameSuffix>
 							<configOptions>
 								<delegatePattern>true</delegatePattern>
+								<useSpringBoot3>true</useSpringBoot3>
+							</configOptions>
+						</configuration>
+					</execution>
+					<!-- Client Code Generation -->
+					<execution>
+						<id>clients</id>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<inputSpec>${project.basedir}/src/main/resources/openapi/clients.yaml</inputSpec>
+							<generatorName>spring</generatorName>
+							<apiPackage>com.springapplication.userapp.client.api</apiPackage>
+							<modelPackage>com.springapplication.userapp.client.model</modelPackage>
+							<invokerPackage>com.springapplication.userapp.invoker</invokerPackage>
+							<output>${project.build.directory}/generated-sources/openapi</output>
+							<supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+							<modelNameSuffix>DTO</modelNameSuffix>
+							<configOptions>
 								<useSpringBoot3>true</useSpringBoot3>
 							</configOptions>
 						</configuration>
