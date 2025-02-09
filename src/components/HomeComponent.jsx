@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react"; 
 import axiosConfig from "../api/axiosConfig";
+import { redirect } from "react-router-dom";
 
 const HomeComponent = () => {
     const [isButtonVisible, setIsButtonVisible] = useState(true);
@@ -11,21 +12,52 @@ const HomeComponent = () => {
         e.preventDefault(); 
         setIsButtonVisible(false);
         localStorage.setItem("isButtonVisible", "false"); 
-
         try{
             const response = await axiosConfig.connect(username); 
-            if(response.status === 200) {
+            console.log("username ", username, "hello")
+            if(response.status === 200) { 
+                console.log(response)
                 window.location.replace(response.data); 
+            }else if (response.status === 204) {
+                handleSpotifyReq(); 
+            }else{
+                console.log("error"); 
             }
         } catch(error) {
+            console.log(error)
             setMessage(error.response?.status === 401 ? "Invalid credentials. Try again." : "An error occurred"); 
             setIsButtonVisible(true); 
             localStorage.setItem("isButtonVisible", "true");
         }
     };
 
-    useEffect(() => {
+    const handleSpotifyReq = async () => {
 
+        try{
+            const response = await axiosConfig.spotifydata(username); 
+            console.log("username ", username, "hello")
+            if(response.status === 200) {
+                console.log("hello", response)
+                setMessage("Top Track: " + response.data["name"]);
+                setImageUrl(response.data["img"]);
+            }else{
+                console.log("error"); 
+            }
+        } catch(error) {
+            setMessage(error.response?.status === 401 ? "Invalid credentials. Try again." : "An error occurred"); 
+            setIsButtonVisible(true); 
+            localStorage.setItem("isButtonVisible", "true");
+        }
+    }
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const code = queryParams.get("code");
+        const state = queryParams.get("state");
+
+        if (!code || !state) {
+            return;
+        }
         const handleRedirect = async () => {
             
             const queryParams = new URLSearchParams(window.location.search); 
@@ -40,9 +72,7 @@ const HomeComponent = () => {
             try{
                 const response = await axiosConfig.redirect(params); 
                 if (response.status === 200) {
-                    console.log(response.data)
-                    setMessage("Top Track: " + response.data["name"]);
-                    setImageUrl(response.data["img"]);
+                    handleSpotifyReq(); 
                 }
             } catch (error) {
                 setMessage("An error occurred while processing the redirect.");

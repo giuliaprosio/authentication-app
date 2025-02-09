@@ -25,7 +25,6 @@ const RegisterComponent = () => {
         if (response.data === "added") {
             navigate("/login");
         }
-        console.log(response.data);
 
         setId("");
         setUsername("");

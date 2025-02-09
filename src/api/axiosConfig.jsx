@@ -43,7 +43,7 @@ const axiosConfig = {
 
     async register(user) {
         return instance.post("/api/register", user, {
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            headers: { "Content-Type": "application/json" },
         });
     },
 
@@ -63,6 +63,15 @@ const axiosConfig = {
         return instance.post("/api/home/redirect", formData, {
             headers: {"Content-Type": "multipart/form-data"},
         }); 
+    },
+
+    async spotifydata(username){
+        const formData = new FormData(); 
+        formData.append('username', username);
+        return instance.post("/api/home/spotify/data",
+            formData, {
+            headers: { "Content-Type": "multipart/form-data" }
+        });
     },
 
     async request(endpoint, method = "get", data = {}) {
