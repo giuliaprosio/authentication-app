@@ -39,7 +39,7 @@ public class LoginControllerTest {
     @Test
     public void GetLogin_ReturnsLogin() throws Exception {
 
-        MvcResult result = this.mockMvc
+        this.mockMvc
                 .perform(get(ENDPOINT))
                 .andExpect(status().isOk())
                 .andExpect(content().string("login"))

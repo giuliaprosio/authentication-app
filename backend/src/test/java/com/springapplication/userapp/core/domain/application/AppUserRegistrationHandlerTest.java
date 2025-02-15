@@ -62,7 +62,7 @@ public class AppUserRegistrationHandlerTest {
         var result = appUserRegistrationHandler.handleUserRegistration(user);
 
         assertTrue(result.isLeft());
-        assertEquals(result.getLeft().getClass(), UserError.AlreadyInSystem.class);
+        assertEquals(UserError.AlreadyInSystem.class, result.getLeft().getClass());
     }
 
     @Test
@@ -75,7 +75,7 @@ public class AppUserRegistrationHandlerTest {
         var result = appUserRegistrationHandler.handleUserRegistration(user);
 
         assertTrue(result.isLeft());
-        assertEquals(result.getLeft().getClass(), UserError.GenericError.class);
+        assertEquals(UserError.GenericError.class, result.getLeft().getClass());
 
     }
 

@@ -4,6 +4,9 @@ import com.c4_soft.springaddons.security.oauth2.test.annotations.WithMockJwtAuth
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springapplication.userapp.configuration.security.CustomAuthenticationSuccessHandler;
 import com.springapplication.userapp.core.adapters.database.UserRepository;
+import com.springapplication.userapp.core.domain.model.User;
+import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.UserObjectMother;
 import com.springapplication.userapp.core.domain.port.input.UserAuthorizationHandler;
 import io.vavr.control.Either;
 import org.junit.jupiter.api.Test;
@@ -21,6 +24,7 @@ import com.springapplication.userapp.controller.model.TopTrackDTO;
 
 import java.util.Optional;
 
+import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -58,8 +62,9 @@ public class HomeControllerTest {
      */
 
     private static final String ENDPOINT = "/api/home";
-    private static final String AUTH_ENDPOINT = "/api/home/connect";
-    private static final String REDIRECT_ENDPOINT = "/api/home/redirect";
+    private static final String AUTH_ENDPOINT =  ENDPOINT +"/connect";
+    private static final String REDIRECT_ENDPOINT = ENDPOINT + "/redirect";
+    private static final String SPOTIFY_ENDPOINT = ENDPOINT + "/spotify/data";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -67,7 +72,7 @@ public class HomeControllerTest {
     @WithMockJwtAuth
     public void getHome_returnHome() throws Exception {
 
-        MvcResult result = this.mockMvc
+        this.mockMvc
                 .perform(get(ENDPOINT))
                 .andExpect(status().isOk())
                 .andExpect(content().string("home"))
@@ -77,7 +82,7 @@ public class HomeControllerTest {
     @Test
     public void getHomeUnauthorized_fails() throws Exception {
 
-        MvcResult result = this.mockMvc
+        this.mockMvc
                 .perform(get(ENDPOINT))
                 .andExpect(status().isUnauthorized())
                 .andReturn();
@@ -88,8 +93,8 @@ public class HomeControllerTest {
     public void givenValidUsernameWithNoSpotifyAuth_whenHandle_thenReturnRedirectString() throws Exception {
         String username = "username";
 
-        when(userAuthorizationHandler.handleAuthorization(username)).thenReturn(Either.right(Optional.empty()));
-        when(spotifyRedirect.redirect(username)).thenReturn(REDIRECT_URL);
+        when(userAuthorizationHandler.handleAuthorization(username)).thenReturn(Either.right(false));
+        when(spotifyRedirect.redirect(username)).thenReturn(Either.right(REDIRECT_URL));
 
         Resource fileResource = new ClassPathResource("username");
 
@@ -100,7 +105,7 @@ public class HomeControllerTest {
                 MediaType.TEXT_PLAIN_VALUE,
                 "username".getBytes());
 
-        MvcResult result = this.mockMvc.perform(multipart(AUTH_ENDPOINT)
+        this.mockMvc.perform(multipart(AUTH_ENDPOINT)
                 .file(firstFile))
                 .andExpect(status().isOk())
                 .andExpect(content().string(REDIRECT_URL))
@@ -109,13 +114,11 @@ public class HomeControllerTest {
 
     @Test
     @WithMockJwtAuth
-    public void givenValidAuthUsername_whenHandle_thenReturnTopTrackDto() throws Exception {
+    public void givenValidAuthUsername_whenHandle_thenReturnVoid() throws Exception {
         String username = "username";
-        TopTrackDTO dto = new TopTrackDTO();
-        String responseBody = objectMapper.writeValueAsString(dto);
 
         when(userAuthorizationHandler.handleAuthorization(username))
-                .thenReturn(Either.right(Optional.of(dto)));
+                .thenReturn(Either.right(true));
 
         Resource fileResource = new ClassPathResource("username");
 
@@ -126,10 +129,9 @@ public class HomeControllerTest {
                 MediaType.TEXT_PLAIN_VALUE,
                 "username".getBytes());
 
-        MvcResult result = this.mockMvc.perform(multipart(AUTH_ENDPOINT)
+        this.mockMvc.perform(multipart(AUTH_ENDPOINT)
                         .file(firstFile))
-                .andExpect(status().isOk())
-                .andExpect(content().json(responseBody))
+                .andExpect(status().isNoContent())
                 .andReturn();
 
     }
@@ -139,12 +141,10 @@ public class HomeControllerTest {
     public void givenSpotifyRedirectParams_whenHandle_thenReturnTopTrackDto() throws Exception {
         String code = "code";
         String state = "username";
-        TopTrackDTO dto = new TopTrackDTO();
-        String responseBody = objectMapper.writeValueAsString(dto);
-
+        User user = UserObjectMother.createValidUser();
 
         when(userAuthorizationHandler.handleAuthorization(eq(code), eq(state), anyString()))
-                .thenReturn(Either.right(dto));
+                .thenReturn(Either.right(user));
 
         Resource fileResource = new ClassPathResource("code");
         assertNotNull(fileResource);
@@ -160,14 +160,70 @@ public class HomeControllerTest {
                 MediaType.TEXT_PLAIN_VALUE,
                 "username".getBytes());
 
-        MvcResult result = this.mockMvc.perform(multipart(REDIRECT_ENDPOINT)
+        this.mockMvc.perform(multipart(REDIRECT_ENDPOINT)
                 .file(firstFile)
                 .file(secondFile))
                 .andExpect(status().isOk())
-                .andExpect(content().json(responseBody))
                 .andReturn();
     }
 
+    @Test
+    @WithMockJwtAuth
+    public void givenInvalidRequest_whenHandleAuthorization_returnError() throws Exception {
 
+        String code = "code";
+        String state = "username";
+        UserError error = new UserError.GenericError("error");
+
+        when(userAuthorizationHandler.handleAuthorization(eq(code), eq(state), anyString()))
+                .thenReturn(Either.left(error));
+
+        Resource fileResource = new ClassPathResource("code");
+        assertNotNull(fileResource);
+        MockMultipartFile firstFile = new MockMultipartFile(
+                "code",fileResource.getFilename(),
+                MediaType.TEXT_PLAIN_VALUE,
+                "code".getBytes());
+
+        Resource secondFileResource = new ClassPathResource("state");
+        assertNotNull(secondFileResource);
+        MockMultipartFile secondFile = new MockMultipartFile(
+                "state",secondFileResource.getFilename(),
+                MediaType.TEXT_PLAIN_VALUE,
+                "username".getBytes());
+
+        this.mockMvc.perform(multipart(REDIRECT_ENDPOINT)
+                        .file(firstFile)
+                        .file(secondFile))
+                .andExpect(status().isOk())
+                .andExpect(content().string(error.toString()))
+                .andReturn();
+
+    }
+
+    @Test
+    @WithMockJwtAuth
+    public void givenValidRequest_whenGetSpotifyData_returnData() throws Exception {
+        String username = randomUUID().toString();
+        TopTrackDTO trackDTO = new TopTrackDTO();
+        trackDTO.setImg(randomUUID().toString());
+        trackDTO.setName(randomUUID().toString());
+
+        Resource fileResource = new ClassPathResource("username");
+        assertNotNull(fileResource);
+        MockMultipartFile file = new MockMultipartFile(
+                "username",fileResource.getFilename(),
+                MediaType.TEXT_PLAIN_VALUE,
+                username.getBytes());
+
+        when(userAuthorizationHandler.handleSpotifyData(username)).thenReturn(Either.right(trackDTO));
+
+        this.mockMvc.perform(multipart(SPOTIFY_ENDPOINT)
+                        .file(file))
+                .andExpect(status().isOk())
+                .andExpect(content().string(objectMapper.writeValueAsString(trackDTO)))
+                .andReturn();
+
+    }
 
 }

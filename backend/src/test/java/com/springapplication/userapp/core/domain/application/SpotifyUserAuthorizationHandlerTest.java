@@ -50,13 +50,11 @@ public class SpotifyUserAuthorizationHandlerTest {
     private SpotifyUserAuthorizationHandler spotifyUserAuthorizationHandler;
 
     @Test
-    public void givenValidUserAlreadyAuthorized_whenHandleSpotifyAuthorization_thenReturnTopTrackDTO() {
+    public void givenValidUserAlreadyAuthorized_whenHandleSpotifyAuthorization_thenReturnVoid() {
         var user = UserObjectMother.createValidUser();
-        var track = DTOsObjectMother.createValidTopTrackDTO();
 
         when(userPersistence.findByUsername(user.getUsername()))
                 .thenReturn(Either.right(Optional.of(user)));
-        when(spotifyGateway.getTopTrack(user)).thenReturn(Either.right(track));
 
         var result = spotifyUserAuthorizationHandler.handleAuthorization(user.getUsername());
         verifyNoMoreInteractions(userPersistence);

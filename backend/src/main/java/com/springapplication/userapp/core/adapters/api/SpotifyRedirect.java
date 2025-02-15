@@ -1,11 +1,13 @@
 package com.springapplication.userapp.core.adapters.api;
 
-import com.springapplication.userapp.core.adapters.clients.StateCache;
+import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.providers.encryption.CryptoUtils;
+import io.vavr.control.Either;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 class SpotifyRedirect {
@@ -14,20 +16,34 @@ class SpotifyRedirect {
     private final String response_type = "code";
     private final String redirect_uri;
     private final String scope = "user-read-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative user-top-read user-read-recently-played user-read-private";
-    private final String encodedScope = URLEncoder.encode(scope,"UTF-8");
-    private final StateCache stateCache;
+    private final CryptoUtils cryptoUtils;
 
     public SpotifyRedirect(
             @Value("${my.client.id}") String client_id,
             @Value("${my.redirect.uri}") String redirect_uri,
-            StateCache stateCache) throws UnsupportedEncodingException {
+            CryptoUtils cryptoUtils) {
         this.client_id = client_id;
         this.redirect_uri = redirect_uri;
-        this.stateCache = stateCache;
+        this.cryptoUtils = cryptoUtils;
     }
 
-    public String redirect(String state) {
-        String encryptedState = state; // TBD: how encrypted
-        return String.format("https://accounts.spotify.com/authorize?client_id=%s&response_type=%s&redirect_uri=%s&state=%s&scope=%s", this.client_id, this.response_type, this.redirect_uri, encryptedState, this.encodedScope);
+    public Either<UserError, String> redirect(String state) {
+        return cryptoUtils.encrypt(state)
+                .flatMap(this::createURL);
+    }
+
+    private Either<UserError, String> createURL(String encryptedState){
+        return encodeScope()
+                .map(encScope -> String.format("https://accounts.spotify.com/authorize?client_id=%s&response_type=%s&redirect_uri=%s&state=%s&scope=%s", this.client_id, this.response_type, this.redirect_uri, encryptedState, encScope));
+    }
+
+    private Either<UserError, String> encodeScope(){
+        try{
+            var encoded = URLEncoder.encode(scope, StandardCharsets.UTF_8);
+            return Either.right(encoded);
+        } catch (Exception e){
+            var error = new UserError.GenericError("Error encoding scope " + e);
+            return Either.left(error);
+        }
     }
 }
