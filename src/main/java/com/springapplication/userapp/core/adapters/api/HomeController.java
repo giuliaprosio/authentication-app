@@ -74,8 +74,8 @@ class HomeController implements HomeApiDelegate {
 
     private ResponseEntity<Void> mapSuccessResponse(Boolean isAuthorized, String username){
         if(!isAuthorized){
-            String authUrl = spotifyRedirect.redirect(username);
-            return new ResponseEntity(authUrl, HttpStatus.OK);
+            return spotifyRedirect.redirect(username)
+                    .fold(this::mapErrorResponse, url -> new ResponseEntity(url, HttpStatus.OK));
         }
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

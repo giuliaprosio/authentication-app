@@ -84,7 +84,7 @@ public class SpotifyApiGateway implements SpotifyGateway {
                 .body(BodyInserters.fromFormData(body))
                 .retrieve()
                 .bodyToMono(AuthTokenDTO.class)
-                .doOnNext(response -> logger.info("Received response: " + response))
+                .doOnNext(response -> logger.info("Received response with tokens"))
                 .doOnError(error -> logger.error("Error during Spotify auth request", error));
     }
 

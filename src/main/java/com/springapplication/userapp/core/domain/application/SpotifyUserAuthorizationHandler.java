@@ -7,6 +7,7 @@ import com.springapplication.userapp.core.domain.model.UserError;
 import com.springapplication.userapp.core.domain.port.input.UserAuthorizationHandler;
 import com.springapplication.userapp.core.domain.port.output.SpotifyGateway;
 import com.springapplication.userapp.core.domain.port.output.UserPersistence;
+import com.springapplication.userapp.providers.encryption.CryptoUtils;
 import com.springapplication.userapp.providers.logging.Logger;
 import com.springapplication.userapp.providers.logging.LoggerFactory;
 import io.vavr.control.Either;
@@ -23,12 +24,14 @@ public class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler
 
     private final UserPersistence userPersistence;
     private final SpotifyGateway spotifyGateway;
+    private final CryptoUtils cryptoUtils;
 
     private final Logger logger = LoggerFactory.getLogger(SpotifyUserAuthorizationHandler.class);
 
-    public SpotifyUserAuthorizationHandler(UserPersistence userPersistence, SpotifyGateway spotifyGateway) {
+    public SpotifyUserAuthorizationHandler(UserPersistence userPersistence, SpotifyGateway spotifyGateway, CryptoUtils cryptoUtils) {
         this.userPersistence = userPersistence;
         this.spotifyGateway = spotifyGateway;
+        this.cryptoUtils = cryptoUtils;
     }
 
     @Override
@@ -44,8 +47,11 @@ public class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler
         // create a record for this object
         var maybeRefreshToken = spotifyGateway.getRefreshToken(code, state, redirect_uri);
         if(maybeRefreshToken.isLeft()) return Either.left(maybeRefreshToken.getLeft());
+        var checkState = cryptoUtils.decrypt(state);
+        if(checkState.isLeft()) return Either.left(checkState.getLeft());
+        var username = checkState.get();
 
-        return userPersistence.findByUsername(state)
+        return userPersistence.findByUsername(username)
                 .flatMap(this::maybeUser)
                 .flatMap(oldUser -> mergeUserInfo(oldUser, maybeRefreshToken.get()))
                 .flatMap(updatedUser -> {
