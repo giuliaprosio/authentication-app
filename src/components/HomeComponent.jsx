@@ -1,12 +1,14 @@
 import React, {useEffect, useState} from "react"; 
+import { useNavigate, Link } from "react-router-dom";
 import axiosConfig from "../api/axiosConfig";
-import { redirect } from "react-router-dom";
+
 
 const HomeComponent = () => {
     const [isButtonVisible, setIsButtonVisible] = useState(true);
     const username = localStorage.getItem("username");
     const [message, setMessage] = useState(""); 
     const [imageUrl, setImageUrl] = useState("");
+    const navigate = useNavigate();
 
     const handleConnect = async (e) => {
         e.preventDefault(); 
@@ -19,7 +21,11 @@ const HomeComponent = () => {
                 console.log(response)
                 window.location.replace(response.data); 
             }else if (response.status === 204) {
-                handleSpotifyReq(); 
+                navigate("home/spotify/data", {
+                    state: {
+                        username: username,
+                    }
+                });
             }else{
                 console.log("error"); 
             }
@@ -30,25 +36,6 @@ const HomeComponent = () => {
             localStorage.setItem("isButtonVisible", "true");
         }
     };
-
-    const handleSpotifyReq = async () => {
-
-        try{
-            const response = await axiosConfig.spotifydata(username); 
-            console.log("username ", username, "hello")
-            if(response.status === 200) {
-                console.log("hello", response)
-                setMessage("Top Track: " + response.data["name"]);
-                setImageUrl(response.data["img"]);
-            }else{
-                console.log("error"); 
-            }
-        } catch(error) {
-            setMessage(error.response?.status === 401 ? "Invalid credentials. Try again." : "An error occurred"); 
-            setIsButtonVisible(true); 
-            localStorage.setItem("isButtonVisible", "true");
-        }
-    }
 
     useEffect(() => {
         const queryParams = new URLSearchParams(window.location.search);
@@ -72,7 +59,11 @@ const HomeComponent = () => {
             try{
                 const response = await axiosConfig.redirect(params); 
                 if (response.status === 200) {
-                    handleSpotifyReq(); 
+                    navigate("home/spotify/data", {
+                        state: {
+                            username: username,
+                        }
+                    }); 
                 }
             } catch (error) {
                 setMessage("An error occurred while processing the redirect.");
