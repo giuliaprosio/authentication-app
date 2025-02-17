@@ -24,7 +24,7 @@ Note: each page has a light-mode toggle
 |![image-info](./img/login_dark.png) | ![image-info](./img/register_dark.png) 
 ### Spotify Analytics Page
 First example: 
-![image-info](./img/analytics.png)
+![image-info](./img/analytics_board.png)
 
 ## Installation and Usage
 ### Prerequisites
