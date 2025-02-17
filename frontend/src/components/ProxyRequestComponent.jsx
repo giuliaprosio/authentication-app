@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import HomeComponent from "./HomeComponent";
 import LoginComponent from "./LoginComponent";
 import RegisterComponent from "./RegisterComponent";
+import SpotifyCountriesComponent from "./SpotifyCountriesComponent"; 
 import axiosConfig from "../api/axiosConfig";
 
 const ProxyRequestComponent = () => {
@@ -13,22 +14,25 @@ const ProxyRequestComponent = () => {
     const componentMap = {
         home: <HomeComponent />,
         login: <LoginComponent />,
-        register: <RegisterComponent />
-    };
+        register: <RegisterComponent />,
+        "home/spotify/data": <SpotifyCountriesComponent/>
+        };
 
     useEffect(() => {
+
         const fetchData = async () => {
             try {
-                const response = await axiosConfig.request(location.pathname);
-
+                let uri = location.pathname; 
+                const response = await axiosConfig.request(uri);
+                
                 if (typeof response.data === "string" && componentMap[response.data]) {
                     setComponent(componentMap[response.data]);
                 } else {
-                    navigate("/index.html");
+                    navigate("/login");
                 }
             } catch (error) {
                 if (error.response && error.response.status === 404) {
-                    navigate("/index.html");
+                    navigate("/login");
                 } else {
                     setComponent(<div>An error occurred: {error.message}</div>);
                 }
