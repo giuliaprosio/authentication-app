@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.springapplication.userapp.controller.api.HomeApiDelegate;
 import com.springapplication.userapp.controller.model.TopTrackDTO;
 
+import java.util.ArrayList;
+
 @Component
 @Controller
 class HomeController implements HomeApiDelegate {
@@ -37,6 +39,8 @@ class HomeController implements HomeApiDelegate {
     @ResponseBody
     public ResponseEntity<String> home() {return new ResponseEntity<>("home", HttpStatus.OK);}
 
+    @GetMapping("/api/home/spotify/data")
+    public ResponseEntity<String> homeSpotify(){ return new ResponseEntity<>("home/spotify/data", HttpStatus.OK); }
 
     /**
      * Request for the Spotify redirect so that a user can give permission to my app to get their data
@@ -84,8 +88,8 @@ class HomeController implements HomeApiDelegate {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    private ResponseEntity<Void> mapSuccessResponse(TopTrackDTO topTrackDTO){
-        return new ResponseEntity(topTrackDTO, HttpStatus.OK);
+    private ResponseEntity<Void> mapSuccessResponse(ArrayList<TopTrackDTO> topTracksDTO){
+        return new ResponseEntity(topTracksDTO, HttpStatus.OK);
     }
 
 }

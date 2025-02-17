@@ -13,6 +13,7 @@ import com.springapplication.userapp.providers.logging.LoggerFactory;
 import io.vavr.control.Either;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -62,7 +63,7 @@ public class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler
     }
 
     @Override
-    public Either<UserError, TopTrackDTO> handleSpotifyData(String username){
+    public Either<UserError, ArrayList<TopTrackDTO>> handleSpotifyData(String username){
         return userPersistence.findByUsername(username)
                 .flatMap(user -> {
                     if(user.isEmpty()) return Either.left(new UserError.GenericError("No user found for request"));

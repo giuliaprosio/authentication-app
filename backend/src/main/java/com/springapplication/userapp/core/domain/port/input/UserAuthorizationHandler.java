@@ -5,6 +5,7 @@ import com.springapplication.userapp.core.domain.model.User;
 import com.springapplication.userapp.core.domain.model.UserError;
 import io.vavr.control.Either;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -16,5 +17,5 @@ public interface UserAuthorizationHandler {
 
     Either<UserError, User> handleAuthorization(String code, String state, String redirect_uri);
 
-    Either<UserError, TopTrackDTO> handleSpotifyData(String username);
+    Either<UserError, ArrayList<TopTrackDTO>> handleSpotifyData(String username);
 }

@@ -83,6 +83,7 @@ paths:
 
 
 
+
 components:
   schemas:
     AuthToken:
@@ -204,8 +205,6 @@ components:
         uri:
           type: string
 
-
-
     Album:
       type: object
       properties:
@@ -273,3 +272,58 @@ components:
           type: integer
         height:
           type: integer
+
+    MusicBrainz:
+      type: object
+      properties:
+        created:
+          type: string
+        count:
+          type: integer
+        offset:
+          type: integer
+        artists:
+          type: array
+          items:
+            $ref: '#/components/schemas/ArtistMusicBrainz'
+
+    ArtistMusicBrainz:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        type-id:
+          type: string
+        score:
+          type: integer
+        gender-id:
+          type: string
+        name:
+          type: string
+        sort-name:
+          type: string
+        gender:
+          type: string
+        area:
+          $ref: '#/components/schemas/CountryArtistMusicBrainz'
+
+    CountryArtistMusicBrainz:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        type-id:
+          type: string
+        name:
+          type: string
+        sort-name:
+          type: string
+        life-span:
+          type: object
+
+
+
