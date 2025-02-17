@@ -173,6 +173,14 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Music Brainz -->
+		<!-- https://mavenlibs.com/maven/dependency/fm.last/musicbrainz-data -->
+		<dependency>
+			<groupId>fm.last</groupId>
+			<artifactId>musicbrainz-data</artifactId>
+			<version>3.1.0</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

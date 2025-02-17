@@ -129,13 +129,16 @@ paths:
           description: OK
 
 
-
 components:
   schemas:
     TopTrack:
       type: object
       properties:
         name:
+          type: string
+        artist:
+          type: string
+        country:
           type: string
         img:
           type: string
