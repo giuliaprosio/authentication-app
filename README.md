@@ -41,7 +41,7 @@ Clone the repo and navigate to the `backend` and `frontend` folders for detailed
 - [x] Docker containerization
 - [ ] Minikube deploy
 - [ ] Forgot Password Flow
-- [ ] Spotify Integration: Music analytics on the dashboard
+- [x] Spotify Integration: Music analytics on the dashboard
 - [ ] Deploy to cloud for a live demo
 
 ## Contributing
