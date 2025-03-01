@@ -15,7 +15,7 @@ const ProxyRequestComponent = () => {
         home: <HomeComponent />,
         login: <LoginComponent />,
         register: <RegisterComponent />,
-        "home/spotify/data": <SpotifyCountriesComponent/>
+        "dashboard/spotify/data": <SpotifyCountriesComponent/>
         };
 
     useEffect(() => {
