@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react"; 
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axiosConfig from "../api/axiosConfig";
 
@@ -6,33 +6,32 @@ import axiosConfig from "../api/axiosConfig";
 const HomeComponent = () => {
     const [isButtonVisible, setIsButtonVisible] = useState(true);
     const username = localStorage.getItem("username");
-    const [message, setMessage] = useState(""); 
+    const [message, setMessage] = useState("");
     const [imageUrl, setImageUrl] = useState("");
     const navigate = useNavigate();
 
     const handleConnect = async (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         setIsButtonVisible(false);
-        localStorage.setItem("isButtonVisible", "false"); 
-        try{
-            const response = await axiosConfig.connect(username); 
-            console.log("username ", username, "hello")
-            if(response.status === 200) { 
+        localStorage.setItem("isButtonVisible", "false");
+        try {
+            const response = await axiosConfig.connect(username);
+            if (response.status === 200) {
                 console.log(response)
-                window.location.replace(response.data); 
-            }else if (response.status === 204) {
-                navigate("home/spotify/data", {
+                window.location.replace(response.data);
+            } else if (response.status === 204) {
+                navigate("dashboard/spotify/data", {
                     state: {
                         username: username,
                     }
                 });
-            }else{
-                console.log("error"); 
+            } else {
+                console.log("error");
             }
-        } catch(error) {
+        } catch (error) {
             console.log(error)
-            setMessage(error.response?.status === 401 ? "Invalid credentials. Try again." : "An error occurred"); 
-            setIsButtonVisible(true); 
+            setMessage(error.response?.status === 401 ? "Invalid credentials. Try again." : "An error occurred");
+            setIsButtonVisible(true);
             localStorage.setItem("isButtonVisible", "true");
         }
     };
@@ -46,32 +45,32 @@ const HomeComponent = () => {
             return;
         }
         const handleRedirect = async () => {
-            
-            const queryParams = new URLSearchParams(window.location.search); 
-            if(!queryParams.toString()) {
-                return; 
+
+            const queryParams = new URLSearchParams(window.location.search);
+            if (!queryParams.toString()) {
+                return;
             }
-            const params = {}; 
+            const params = {};
             queryParams.forEach((value, key) => {
-                params[key] = value; 
-            }); 
-    
-            try{
-                const response = await axiosConfig.redirect(params); 
+                params[key] = value;
+            });
+
+            try {
+                const response = await axiosConfig.redirect(params);
                 if (response.status === 200) {
                     navigate("home/spotify/data", {
                         state: {
                             username: username,
                         }
-                    }); 
+                    });
                 }
             } catch (error) {
                 setMessage("An error occurred while processing the redirect.");
             }
         }
-    handleRedirect();
-    }, []); 
-    
+        handleRedirect();
+    }, []);
+
     return (
         <div className="home-card">
 
@@ -80,19 +79,19 @@ const HomeComponent = () => {
                 <h3>Analytics Dashboard</h3>
                 <button className="btn btn-connect" id="connectToSpotifty" onClick={handleConnect}>
                     <img src="src/img/spotify-logo-png-7069.png" alt="Logo" />
-                    &emsp;Connect to Spotify</button> 
-                    {message && (
-                        <div>
-                            <h4 className="response-message">{message}</h4>
-                        </div>
-                        )}
-                        {imageUrl && (
-                        <div>
-                            <img src={imageUrl} alt="Fetched Content" />
-                        </div>
-                        )}
+                    &emsp;Connect to Spotify</button>
+                {message && (
+                    <div>
+                        <h4 className="response-message">{message}</h4>
+                    </div>
+                )}
+                {imageUrl && (
+                    <div>
+                        <img src={imageUrl} alt="Fetched Content" />
+                    </div>
+                )}
             </div>
-        </div>  
+        </div>
     )
 }
 

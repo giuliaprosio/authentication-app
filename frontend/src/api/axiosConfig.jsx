@@ -68,7 +68,7 @@ const axiosConfig = {
     async spotifydata(username){
         const formData = new FormData(); 
         formData.append('username', username);
-        return instance.post("/api/home/spotify/data",
+        return instance.post("/api/dashboard/spotify/data",
             formData, {
             headers: { "Content-Type": "multipart/form-data" }
         });
