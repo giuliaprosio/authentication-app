@@ -2,6 +2,10 @@
 An application to connect a web page with login or creation of a new account. 
 The data is set up to be connected to a MySQL database. 
 
+Once logged in, the communication uses JWT tokens. The 
+user can connect to their Spotify account and review
+cool analysis of their listening patterns!
+
 To complete the connection, before building the app (I use IntelliJ), 
 go into the folder 
 
