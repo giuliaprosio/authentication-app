@@ -15,6 +15,6 @@ public interface SpotifyGateway {
 
     Either<UserError, AuthTokenDTO> getRefreshToken(String code, String state, String redirect_uri);
 
-    Either<UserError, ArrayList<TopTrackDTO>> getTopTrack(User user);
+    Either<UserError, ArrayList<TopTrackDTO>> getTopTracks(User user, int howMany);
 
 }

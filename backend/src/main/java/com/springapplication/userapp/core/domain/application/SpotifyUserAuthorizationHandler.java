@@ -62,15 +62,6 @@ public class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler
                 });
     }
 
-    @Override
-    public Either<UserError, ArrayList<TopTrackDTO>> handleSpotifyData(String username){
-        return userPersistence.findByUsername(username)
-                .flatMap(user -> {
-                    if(user.isEmpty()) return Either.left(new UserError.GenericError("No user found for request"));
-                    return spotifyGateway.getTopTrack(user.get());
-                });
-    }
-
     private Either<UserError, Boolean> isAlreadyAuthorized(Optional<User> user){
         if(user.isEmpty()) {
             logger.error("User not in the system");
