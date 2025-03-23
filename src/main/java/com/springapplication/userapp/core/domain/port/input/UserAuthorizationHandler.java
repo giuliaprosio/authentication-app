@@ -17,5 +17,4 @@ public interface UserAuthorizationHandler {
 
     Either<UserError, User> handleAuthorization(String code, String state, String redirect_uri);
 
-    Either<UserError, ArrayList<TopTrackDTO>> handleSpotifyData(String username);
 }

@@ -110,8 +110,9 @@ paths:
       responses:
         '200':
           description: OK
-  /home/spotify/data:
+  /dashboard/spotify/data:
     post:
+      tags: [Spotify]
       summary: Get Spotify Data
       operationId: getSpotifyData
       requestBody:

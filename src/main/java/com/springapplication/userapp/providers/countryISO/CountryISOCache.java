@@ -1,4 +1,4 @@
-package com.springapplication.userapp.providers.CountryISO;
+package com.springapplication.userapp.providers.countryISO;
 
 import org.springframework.stereotype.Service;
 

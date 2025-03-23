@@ -39,9 +39,6 @@ class HomeController implements HomeApiDelegate {
     @ResponseBody
     public ResponseEntity<String> home() {return new ResponseEntity<>("home", HttpStatus.OK);}
 
-    @GetMapping("/api/home/spotify/data")
-    public ResponseEntity<String> homeSpotify(){ return new ResponseEntity<>("home/spotify/data", HttpStatus.OK); }
-
     /**
      * Request for the Spotify redirect so that a user can give permission to my app to get their data
      * @return the url
@@ -51,13 +48,6 @@ class HomeController implements HomeApiDelegate {
         logger.info("Getting user authorization for user " + username);
         return userAuthorizationHandler.handleAuthorization(username)
                 .fold(this::mapErrorResponse, success -> mapSuccessResponse(success, username));
-    }
-
-    @Override
-    public ResponseEntity<Void> getSpotifyData(String username) {
-        logger.info("Getting Spotify Data for user " + username);
-        return userAuthorizationHandler.handleSpotifyData(username)
-                .fold(this::mapErrorResponse, this::mapSuccessResponse);
     }
 
     /**
@@ -87,9 +77,4 @@ class HomeController implements HomeApiDelegate {
     private ResponseEntity<Void> mapSuccessResponse(User user){
         return new ResponseEntity(HttpStatus.OK);
     }
-
-    private ResponseEntity<Void> mapSuccessResponse(ArrayList<TopTrackDTO> topTracksDTO){
-        return new ResponseEntity(topTracksDTO, HttpStatus.OK);
-    }
-
 }

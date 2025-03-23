@@ -19,12 +19,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import com.springapplication.userapp.controller.model.TopTrackDTO;
 
-import java.util.Optional;
-
-import static java.util.UUID.randomUUID;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -64,7 +59,6 @@ public class HomeControllerTest {
     private static final String ENDPOINT = "/api/home";
     private static final String AUTH_ENDPOINT =  ENDPOINT +"/connect";
     private static final String REDIRECT_ENDPOINT = ENDPOINT + "/redirect";
-    private static final String SPOTIFY_ENDPOINT = ENDPOINT + "/spotify/data";
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -200,30 +194,4 @@ public class HomeControllerTest {
                 .andReturn();
 
     }
-
-    @Test
-    @WithMockJwtAuth
-    public void givenValidRequest_whenGetSpotifyData_returnData() throws Exception {
-        String username = randomUUID().toString();
-        TopTrackDTO trackDTO = new TopTrackDTO();
-        trackDTO.setImg(randomUUID().toString());
-        trackDTO.setName(randomUUID().toString());
-
-        Resource fileResource = new ClassPathResource("username");
-        assertNotNull(fileResource);
-        MockMultipartFile file = new MockMultipartFile(
-                "username",fileResource.getFilename(),
-                MediaType.TEXT_PLAIN_VALUE,
-                username.getBytes());
-
-        when(userAuthorizationHandler.handleSpotifyData(username)).thenReturn(Either.right(trackDTO));
-
-        this.mockMvc.perform(multipart(SPOTIFY_ENDPOINT)
-                        .file(file))
-                .andExpect(status().isOk())
-                .andExpect(content().string(objectMapper.writeValueAsString(trackDTO)))
-                .andReturn();
-
-    }
-
 }

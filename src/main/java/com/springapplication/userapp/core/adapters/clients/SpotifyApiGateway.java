@@ -21,7 +21,7 @@ import com.springapplication.userapp.client.model.TotalObjectDTO;
 import com.springapplication.userapp.client.model.TopTracksSpotifyResponseDTO;
 import reactor.core.publisher.Mono;
 import com.springapplication.userapp.client.model.MusicBrainzDTO;
-import com.springapplication.userapp.providers.CountryISO.CountryISOCache;
+import com.springapplication.userapp.providers.countryISO.CountryISOCache;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,41 +53,39 @@ public class SpotifyApiGateway implements SpotifyGateway {
     }
 
     @Override
-    public Either<UserError, ArrayList<TopTrackDTO>> getTopTrack(User user) {
+    public Either<UserError, ArrayList<TopTrackDTO>> getTopTracks(User user, int howMany) {
+
         if(topTracksCache.containsKey(user.getUsername())){
-            System.out.println("user " + user.getUsername());
-            System.out.println("data " + topTracksCache.get(user.getUsername()));
             return Either.right(topTracksCache.get(user.getUsername()));
         }
-        var maybeTopTrack = spotifyTopArtistRequest(user);
+        var maybeTopTrack = spotifyTopArtistsRequest(user, howMany);
         if(maybeTopTrack.isRight()){
-            System.out.println("user " + user.getUsername());
-            System.out.println("data " + maybeTopTrack.get());
             topTracksCache.put(user.getUsername(), maybeTopTrack.get());
             return maybeTopTrack;
         }
         return maybeTopTrack;
     }
 
-    private Either<UserError, ArrayList<TopTrackDTO>> spotifyTopArtistRequest(User user) {
+    private Either<UserError, ArrayList<TopTrackDTO>> spotifyTopArtistsRequest(User user, int howMany) {
         return syncGetAccessTokenIfNecessary(user)
-                .flatMap(__ -> syncSpotifyTopArtistRequest(user))
-                .flatMap(dto -> getTop10(dto, user));
+                .flatMap(__ -> syncSpotifyTopArtistRequest(user, howMany))
+                .flatMap(dto -> getTops(dto, user, howMany));
     }
 
-    private Either<UserError, ArrayList<TopTrackDTO>> getTop10(TopTracksSpotifyResponseDTO dto, User user){
-        ArrayList<TopTrackDTO> topTrackDTOS = new ArrayList<>();
-        for(int i = 0; i < 10; i++){
+    private Either<UserError, ArrayList<TopTrackDTO>> getTops(TopTracksSpotifyResponseDTO dto, User user, int howMany){
+        var topTrackDTOs = new ArrayList<TopTrackDTO>();
+
+        for(int i = 0; i < howMany; i++){
             var artistId = dto.getItems().get(i).getId();
             var maybeCountry = syncTotalObject(artistId, user).flatMap(this::getArtistCountry);
-            if(maybeCountry.isRight()) topTrackDTOS.add(maybeCountry.get());
+            if(maybeCountry.isRight()) topTrackDTOs.add(maybeCountry.get());
 
             try {Thread.sleep(1000);} catch (Exception e){
-                System.out.println(e);
+                logger.error("Failed to call Spotify API for thread sleep error", e);
             }
         }
 
-        return Either.right(topTrackDTOS);
+        return Either.right(topTrackDTOs);
     }
 
     private Either<UserError, TopTrackDTO> getArtistCountry(TotalObjectDTO dto){
@@ -153,8 +151,8 @@ public class SpotifyApiGateway implements SpotifyGateway {
 
     }
 
-    private Either<UserError, TopTracksSpotifyResponseDTO> syncSpotifyTopArtistRequest(User user){
-        return spotifyTopTracksRequest(user).block();
+    private Either<UserError, TopTracksSpotifyResponseDTO> syncSpotifyTopArtistRequest(User user, int howMany){
+        return spotifyTopTracksRequest(user, howMany).block();
     }
 
     private Either<UserError, TotalObjectDTO> syncTotalObject(String id, User user){
@@ -189,8 +187,8 @@ public class SpotifyApiGateway implements SpotifyGateway {
                 .bodyToMono(MusicBrainzDTO.class);
     }
 
-    private Mono<Either<UserError, TopTracksSpotifyResponseDTO>> spotifyTopTracksRequest(User user){
-        return spotifyTopTracksRequestBuilder(user)
+    private Mono<Either<UserError, TopTracksSpotifyResponseDTO>> spotifyTopTracksRequest(User user, int howMany){
+        return spotifyTopTracksRequestBuilder(user, howMany)
                 .flatMap(dto -> {
                     if(dto == null) return Mono.just(Either.left(new UserError.GenericError("Error calling API")));
                     return Mono.just(Either.right(dto));
@@ -207,8 +205,6 @@ public class SpotifyApiGateway implements SpotifyGateway {
         return getAccessToken(user.getRefreshToken())
                 .flatMap(dto -> {
                     tokenCache.put(user.getUsername(), dto.getAccessToken());
-                    System.out.println(user.getUsername());
-                    System.out.println(dto.getAccessToken());
                     return Mono.just(Either.right(dto.getAccessToken()));
                 });
 
@@ -223,10 +219,10 @@ public class SpotifyApiGateway implements SpotifyGateway {
                 );
     }
 
-    private Mono<TopTracksSpotifyResponseDTO> spotifyTopTracksRequestBuilder(User user) {
+    private Mono<TopTracksSpotifyResponseDTO> spotifyTopTracksRequestBuilder(User user, int howMany) {
         String accessToken = tokenCache.getIfPresent(user.getUsername());
-        System.out.println("ACCESS TOKEN FOR SOF " + accessToken + " username " + user.getUsername());
-        WebClient topTracksClient = clientBuilder.buildClient("/top/tracks?time_range=medium_term&limit=10&offset=0", "user_analytics");
+        String uri = String.format("/top/tracks?time_range=medium_term&limit=%s&offset=0", howMany);
+        WebClient topTracksClient = clientBuilder.buildClient(uri, "user_analytics");
         return topTracksClient.get()
                 .header("Authorization", "Bearer " + accessToken)
                 .retrieve()
