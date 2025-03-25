@@ -10,7 +10,7 @@ import io.vavr.control.Either;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AppUserRegistrationHandler implements UserRegistrationHandler {
+class AppUserRegistrationHandler implements UserRegistrationHandler {
 
     private final Logger logger = LoggerFactory.getLogger(AppUserRegistrationHandler.class);
     private final UserPersistence userPersistence;

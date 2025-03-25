@@ -21,7 +21,7 @@ import java.util.Optional;
  * for the Spotify API
  */
 @Component
-public class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler {
+class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler {
 
     private final UserPersistence userPersistence;
     private final SpotifyGateway spotifyGateway;
@@ -49,7 +49,7 @@ public class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler
         var maybeRefreshToken = spotifyGateway.getRefreshToken(code, state, redirect_uri);
         if(maybeRefreshToken.isLeft()) return Either.left(maybeRefreshToken.getLeft());
         var checkState = cryptoUtils.decrypt(state);
-        if(checkState.isLeft()) return Either.left(checkState.getLeft());
+        if(checkState.isLeft()) return Either.left(new UserError.GenericError(checkState.getLeft().message()));
         var username = checkState.get();
 
         return userPersistence.findByUsername(username)
