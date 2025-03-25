@@ -2,6 +2,7 @@ package com.springapplication.userapp.core.adapters.api;
 
 import com.springapplication.userapp.core.domain.model.UserError;
 import com.springapplication.userapp.providers.encryption.CryptoUtils;
+import com.springapplication.userapp.providers.encryption.EncryptionError;
 import io.vavr.control.Either;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ class SpotifyRedirect {
 
     public Either<UserError, String> redirect(String state) {
         return cryptoUtils.encrypt(state)
+                .mapLeft(this::wrapError)
                 .flatMap(this::createURL);
     }
 
@@ -45,5 +47,9 @@ class SpotifyRedirect {
             var error = new UserError.GenericError("Error encoding scope " + e);
             return Either.left(error);
         }
+    }
+
+    private UserError wrapError(EncryptionError e) {
+        return new UserError.GenericError(e.message());
     }
 }

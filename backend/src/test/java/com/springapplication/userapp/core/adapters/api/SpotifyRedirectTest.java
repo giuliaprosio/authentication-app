@@ -2,6 +2,7 @@ package com.springapplication.userapp.core.adapters.api;
 
 import com.springapplication.userapp.core.domain.model.UserError;
 import com.springapplication.userapp.providers.encryption.CryptoUtils;
+import com.springapplication.userapp.providers.encryption.EncryptionError;
 import io.vavr.control.Either;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -55,7 +56,7 @@ public class SpotifyRedirectTest {
     @Test
     void givenEncryptionError_whenSpotifyRedirect_returnError(){
         String state = randomUUID().toString();
-        var error = new UserError.GenericError("Encryption Error");
+        var error = new EncryptionError("Encryption Error");
 
         when(cryptoUtils.encrypt(state)).thenReturn(Either.left(error));
 
@@ -63,6 +64,12 @@ public class SpotifyRedirectTest {
 
         assertTrue(result.isLeft());
         assertEquals(UserError.GenericError.class, result.getLeft().getClass());
+    }
+
+    @Test
+    void givenEncodingError_whenCreateUrl_returnError() {
+        String state = randomUUID().toString();
+        String encState = randomUUID().toString();
     }
 
 

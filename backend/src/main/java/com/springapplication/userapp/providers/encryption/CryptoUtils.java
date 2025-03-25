@@ -36,15 +36,15 @@ public class CryptoUtils {
         this.key = Base64.getDecoder().decode(key);
     }
 
-    public Either<UserError, String> encrypt(String state){
+    public Either<EncryptionError, String> encrypt(String state){
         return doCrypto(Cipher.ENCRYPT_MODE, state);
     }
 
-    public Either<UserError, String> decrypt(String state){
+    public Either<EncryptionError, String> decrypt(String state){
         return doCrypto(Cipher.DECRYPT_MODE, state);
     }
 
-    private Either<UserError, String> doCrypto(int cipherMode, String state) {
+    private Either<EncryptionError, String> doCrypto(int cipherMode, String state) {
         try {
             Key secretKey = new SecretKeySpec(key, ALGORITHM);
             Cipher cipher = Cipher.getInstance(TRANSFORMATION);
@@ -61,7 +61,7 @@ public class CryptoUtils {
                 return Either.right(new String(decryptedBytes)); // Convert back to String
             }
         } catch (Exception e) {
-            var error = new UserError.GenericError("Error encrypting/decrypting " + e.getLocalizedMessage());
+            var error = new EncryptionError("Error encrypting/decrypting " + e.getLocalizedMessage());
             logger.error("Error encrypting/decrypting state: " + state + "\n" + e);
             return Either.left(error);
         }

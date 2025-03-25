@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 
 @Component
-public class SpotifyDashboardHandler implements DashboardHandler {
+class SpotifyDashboardHandler implements DashboardHandler {
 
     private final UserPersistence userPersistence;
     private final SpotifyGateway spotifyGateway;
