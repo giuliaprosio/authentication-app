@@ -3,7 +3,8 @@ package com.springapplication.userapp.core.domain.application;
 import com.springapplication.userapp.configuration.security.CustomAuthenticationSuccessHandler;
 import com.springapplication.userapp.core.adapters.database.UserRepository;
 import com.springapplication.userapp.core.domain.model.User;
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.AdaptersError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.core.domain.model.UserObjectMother;
 import com.springapplication.userapp.core.domain.port.output.UserPersistence;
 import io.vavr.control.Either;
@@ -13,6 +14,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,7 +44,7 @@ public class AppUserRegistrationHandlerTest {
 
 
     @Test
-    public void givenValidUserToRegister_whenHandleRegistration_thenReturnUser(){
+    void givenValidUserToRegister_whenHandleRegistration_thenReturnUser(){
         User user = UserObjectMother.createValidUser();
 
         when(userPersistence.save(user)).thenReturn(Either.right(user));
@@ -54,10 +57,10 @@ public class AppUserRegistrationHandlerTest {
     }
 
     @Test
-    public void givenExistingUser_whenHandleRegistration_thenReturnError(){
+    void givenExistingUser_whenHandleRegistration_thenReturnError(){
         User user = UserObjectMother.createValidUser();
         var cause = new java.sql.SQLIntegrityConstraintViolationException();
-        when(userPersistence.save(user)).thenReturn(Either.left(new java.sql.SQLIntegrityConstraintViolationException(cause)));
+        when(userPersistence.save(user)).thenReturn(Either.left(new AdaptersError.DatabaseError("", Optional.of(cause))));
 
         var result = appUserRegistrationHandler.handleUserRegistration(user);
 
@@ -66,11 +69,11 @@ public class AppUserRegistrationHandlerTest {
     }
 
     @Test
-    public void givenGenericError_whenHandleRegistration_returnError(){
+    void givenGenericError_whenHandleRegistration_returnError(){
         User user = UserObjectMother.createValidUser();
 
         var cause = new Exception();
-        when(userPersistence.save(user)).thenReturn(Either.left(new Exception(cause)));
+        when(userPersistence.save(user)).thenReturn(Either.left(new AdaptersError.DatabaseError("", Optional.of(cause))));
 
         var result = appUserRegistrationHandler.handleUserRegistration(user);
 
@@ -79,7 +82,15 @@ public class AppUserRegistrationHandlerTest {
 
     }
 
+    @Test
+    void givenErrorWithNoException_whenHandleRegistration_returnError() {
+        User user = UserObjectMother.createValidUser();
 
+        when(userPersistence.save(user)).thenReturn(Either.left(new AdaptersError.DatabaseError("", Optional.empty())));
 
+        var result = appUserRegistrationHandler.handleUserRegistration(user);
+
+        assertTrue(result.isLeft());
+    }
 
 }

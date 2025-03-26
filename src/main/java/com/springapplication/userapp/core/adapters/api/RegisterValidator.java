@@ -1,6 +1,6 @@
 package com.springapplication.userapp.core.adapters.api;
 
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import io.vavr.control.Either;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Component;

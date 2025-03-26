@@ -3,7 +3,7 @@ package com.springapplication.userapp.core.domain.port.output;
 import com.springapplication.userapp.client.model.AuthTokenDTO;
 import com.springapplication.userapp.controller.model.TopTrackDTO;
 import com.springapplication.userapp.core.domain.model.User;
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import io.vavr.control.Either;
 
 import java.util.ArrayList;

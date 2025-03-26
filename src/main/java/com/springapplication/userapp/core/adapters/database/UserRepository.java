@@ -1,7 +1,7 @@
 package com.springapplication.userapp.core.adapters.database;
 
 import com.springapplication.userapp.core.domain.model.User;
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.AdaptersError;
 import com.springapplication.userapp.core.domain.port.output.UserPersistence;
 import com.springapplication.userapp.providers.logging.Logger;
 import com.springapplication.userapp.providers.logging.LoggerFactory;
@@ -30,7 +30,7 @@ public class UserRepository implements UserPersistence, UserDetailsService {
     }
 
     @Override
-    public Either<UserError, Optional<User>> findByUsername(String username) {
+    public Either<AdaptersError, Optional<User>> findByUsername(String username) {
         String sql = "SELECT * FROM users_table WHERE username = ?" ;
 
         return Try.of(() -> unsafeGet(sql, username))
@@ -40,7 +40,7 @@ public class UserRepository implements UserPersistence, UserDetailsService {
     }
 
     @Override
-    public Either<UserError, Optional<User>> findByEmail(String email) {
+    public Either<AdaptersError, Optional<User>> findByEmail(String email) {
         String sql = "SELECT * FROM users_table WHERE email = ?";
 
         return Try.of(() -> unsafeGet(sql, email))
@@ -50,21 +50,23 @@ public class UserRepository implements UserPersistence, UserDetailsService {
     }
 
     @Override
-    public Either<Throwable, User> save(User user) {
+    public Either<AdaptersError, User> save(User user) {
 
         String sql = "INSERT INTO users_table (id, username, email, password, refresh_token, access_token) " +
                 "VALUES (?, ?, ?, ?, ?, ?)";
         logger.info("Saving new user or updating a new one");
         return Try.of(() -> unsafeInsert(sql, user))
-                .toEither();
+                .toEither()
+                .mapLeft(this::mapError);
     }
 
     @Override
-    public Either<Throwable, User> update(User user){
+    public Either<AdaptersError, User> update(User user){
         String sql = "UPDATE users_table SET refresh_token = ? WHERE username = ?";
         logger.info("Updating user");
         return Try.of(() -> unsafeUpdate(sql, user))
-                .toEither();
+                .toEither()
+                .mapLeft(this::mapError);
     }
 
     // HORRIBLE let's see how I can change it
@@ -73,9 +75,9 @@ public class UserRepository implements UserPersistence, UserDetailsService {
         return findByUsername(username).get().get();
     }
 
-    private UserError mapError(Throwable throwable){
+    private AdaptersError mapError(Throwable throwable){
         logger.error("Generic error in the db: " + throwable);
-        return new UserError.GenericError("Generic error in db: " + throwable.getMessage());
+        return new AdaptersError.DatabaseError("Generic error in db: " + throwable.getMessage(), Optional.of(throwable));
     }
 
     private User unsafeInsert(String sql, User user){

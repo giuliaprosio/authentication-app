@@ -1,7 +1,7 @@
 package com.springapplication.userapp.core.adapters.api;
 
 import com.springapplication.userapp.core.domain.model.User;
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.core.domain.port.input.UserAuthorizationHandler;
 import com.springapplication.userapp.providers.logging.Logger;
 import com.springapplication.userapp.providers.logging.LoggerFactory;
@@ -13,9 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import com.springapplication.userapp.controller.api.HomeApiDelegate;
-import com.springapplication.userapp.controller.model.TopTrackDTO;
-
-import java.util.ArrayList;
 
 @Component
 @Controller

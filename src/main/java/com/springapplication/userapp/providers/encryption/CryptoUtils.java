@@ -1,28 +1,16 @@
 package com.springapplication.userapp.providers.encryption;
 
-import com.springapplication.userapp.core.domain.model.UserError;
 import com.springapplication.userapp.providers.logging.Logger;
 import com.springapplication.userapp.providers.logging.LoggerFactory;
 import io.vavr.control.Either;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
-import java.io.IOException;
-import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Base64;
-
-import static java.util.UUID.randomUUID;
 
 @Service
 public class CryptoUtils {

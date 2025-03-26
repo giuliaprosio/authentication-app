@@ -1,6 +1,6 @@
 package com.springapplication.userapp.core.adapters.api;
 
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.providers.encryption.CryptoUtils;
 import com.springapplication.userapp.providers.encryption.EncryptionError;
 import io.vavr.control.Either;
@@ -65,12 +65,4 @@ public class SpotifyRedirectTest {
         assertTrue(result.isLeft());
         assertEquals(UserError.GenericError.class, result.getLeft().getClass());
     }
-
-    @Test
-    void givenEncodingError_whenCreateUrl_returnError() {
-        String state = randomUUID().toString();
-        String encState = randomUUID().toString();
-    }
-
-
 }

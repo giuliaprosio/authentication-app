@@ -1,7 +1,7 @@
 package com.springapplication.userapp.core.adapters.api;
 
 import com.springapplication.userapp.core.domain.model.User;
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import io.vavr.control.Either;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 import com.springapplication.userapp.controller.model.NewUserDTO;
 
 import java.util.Random;
-import java.util.UUID;
-import java.util.random.RandomGenerator;
 
 @Component
 class RegisterMapper {
