@@ -1,6 +1,6 @@
 package com.springapplication.userapp.core.domain.port.input;
 
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import io.vavr.control.Either;
 
 import java.util.ArrayList;

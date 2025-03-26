@@ -1,11 +1,12 @@
-package com.springapplication.userapp.core.domain.model;
+package com.springapplication.userapp.core.domain.model.error;
+
 
 /**
  * Sealed interface with two specific types: NoUsername and DuplicatedUsername
  * This approach ensures only two errors occur
  */
-public sealed interface UserError permits UserError.NoUsername, UserError.NoEmail,
-UserError.AlreadyInSystem, UserError.NoPassword, UserError.NoSecondPassword, UserError.SecondPasswordNoMatch, UserError.GenericError {
+public sealed interface UserError permits AdaptersError, UserError.AlreadyInSystem, UserError.GenericError, UserError.NoEmail, UserError.NoPassword, UserError.NoSecondPassword, UserError.NoUsername, UserError.SecondPasswordNoMatch
+         {
 
     record GenericError(String error) implements UserError {
         @Override

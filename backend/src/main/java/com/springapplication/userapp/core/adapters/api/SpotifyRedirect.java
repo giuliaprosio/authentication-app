@@ -1,6 +1,6 @@
 package com.springapplication.userapp.core.adapters.api;
 
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.providers.encryption.CryptoUtils;
 import com.springapplication.userapp.providers.encryption.EncryptionError;
 import io.vavr.control.Either;

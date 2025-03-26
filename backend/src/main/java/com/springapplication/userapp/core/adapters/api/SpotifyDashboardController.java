@@ -1,7 +1,7 @@
 package com.springapplication.userapp.core.adapters.api;
 
 import com.springapplication.userapp.controller.api.DashboardApiDelegate;
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.core.domain.port.input.DashboardHandler;
 import com.springapplication.userapp.providers.logging.Logger;
 import com.springapplication.userapp.providers.logging.LoggerFactory;

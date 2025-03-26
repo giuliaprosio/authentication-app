@@ -1,9 +1,9 @@
 package com.springapplication.userapp.core.domain.application;
 
-import com.springapplication.userapp.controller.model.TopTrackDTO;
 import com.springapplication.userapp.client.model.AuthTokenDTO;
 import com.springapplication.userapp.core.domain.model.User;
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.AdaptersError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.core.domain.port.input.UserAuthorizationHandler;
 import com.springapplication.userapp.core.domain.port.output.SpotifyGateway;
 import com.springapplication.userapp.core.domain.port.output.UserPersistence;
@@ -13,7 +13,6 @@ import com.springapplication.userapp.providers.logging.LoggerFactory;
 import io.vavr.control.Either;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -38,8 +37,9 @@ class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler {
     @Override
     public Either<UserError, Boolean> handleAuthorization(String username) {
         logger.info("Searching if user already authorized to operate on their behalf");
-        return userPersistence.findByUsername(username)
-                .flatMap(this::isAlreadyAuthorized);
+        Either<UserError, Optional<User>> byUsername = Either.narrow(userPersistence.findByUsername(username));
+
+        return isAlreadyAuthorized(byUsername);
     }
 
     @Override
@@ -52,22 +52,23 @@ class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler {
         if(checkState.isLeft()) return Either.left(new UserError.GenericError(checkState.getLeft().message()));
         var username = checkState.get();
 
-        return userPersistence.findByUsername(username)
-                .flatMap(this::maybeUser)
+        Either<UserError, Optional<User>> byUsername = Either.narrow(userPersistence.findByUsername(username));
+
+        return maybeUser(byUsername)
                 .flatMap(oldUser -> mergeUserInfo(oldUser, maybeRefreshToken.get()))
                 .flatMap(updatedUser -> {
-                    var result= userPersistence.update(updatedUser);
-                    if(result.isLeft()) return Either.left(wrapThrowable(result.getLeft()));
-                    return Either.right(result.get());
+                    return Either.narrow(userPersistence.update(updatedUser));
                 });
     }
 
-    private Either<UserError, Boolean> isAlreadyAuthorized(Optional<User> user){
-        if(user.isEmpty()) {
+    private Either<UserError, Boolean> isAlreadyAuthorized( Either<UserError, Optional<User>> user){
+        if(user.isLeft()) return Either.left(user.getLeft());
+
+        if(user.get().isEmpty()) {
             logger.error("User not in the system");
             return Either.left(new UserError.GenericError("User is not in the system"));
         }
-        if(user.get().getRefreshToken() == null){
+        if(user.get().get().getRefreshToken() == null){
             logger.info("User did not authorize third party operations yet");
             return Either.right(false);
         }
@@ -79,12 +80,13 @@ class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler {
         return new UserError.GenericError("Database error: " + throwable);
     }
 
-    private Either<UserError, User> maybeUser(Optional<User> user){
-        if(user.isEmpty()){
+    private Either<UserError, User> maybeUser( Either<UserError, Optional<User>> maybeUser){
+        if(maybeUser.isLeft()) return Either.left(maybeUser.getLeft());
+        if(maybeUser.get().isEmpty()){
             logger.info("No user in the system");
             return Either.left(new UserError.GenericError("No user in the system"));
         }
-        return Either.right(user.get());
+        return Either.right(maybeUser.get().get());
     }
 
     private Either<UserError, User> mergeUserInfo(User user, AuthTokenDTO dto){

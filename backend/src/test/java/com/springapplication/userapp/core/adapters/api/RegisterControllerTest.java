@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springapplication.userapp.configuration.security.CustomAuthenticationSuccessHandler;
 import com.springapplication.userapp.core.adapters.database.UserRepository;
 import com.springapplication.userapp.core.domain.model.User;
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.core.domain.model.RegisterRequestObjectMother;
 import com.springapplication.userapp.core.domain.port.input.UserRegistrationHandler;
 import io.vavr.control.Either;

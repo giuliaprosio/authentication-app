@@ -2,7 +2,7 @@ package com.springapplication.userapp.core.adapters.clients;
 
 import com.google.common.cache.Cache;
 import com.springapplication.userapp.core.domain.model.User;
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.core.domain.port.output.SpotifyGateway;
 import com.springapplication.userapp.providers.logging.Logger;
 import com.springapplication.userapp.providers.logging.LoggerFactory;

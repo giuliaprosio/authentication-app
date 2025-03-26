@@ -4,9 +4,8 @@ import com.c4_soft.springaddons.security.oauth2.test.annotations.WithMockJwtAuth
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springapplication.userapp.configuration.security.CustomAuthenticationSuccessHandler;
 import com.springapplication.userapp.core.adapters.database.UserRepository;
-import com.springapplication.userapp.core.domain.model.UserError;
+import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.core.domain.port.input.DashboardHandler;
-import com.springapplication.userapp.core.domain.port.input.UserAuthorizationHandler;
 import io.vavr.control.Either;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
