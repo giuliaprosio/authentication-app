@@ -1,7 +1,5 @@
 package com.springapplication.userapp.core.domain.model;
 
-import com.springapplication.userapp.core.domain.model.User;
-
 import java.util.UUID;
 
 public class UserObjectMother {
