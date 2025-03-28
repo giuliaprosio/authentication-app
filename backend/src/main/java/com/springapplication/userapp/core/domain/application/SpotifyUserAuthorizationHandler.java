@@ -75,11 +75,6 @@ class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler {
         return Either.right(true);
     }
 
-    private UserError wrapThrowable(Throwable throwable){
-        logger.error("DB error: " + throwable);
-        return new UserError.GenericError("Database error: " + throwable);
-    }
-
     private Either<UserError, User> maybeUser( Either<UserError, Optional<User>> maybeUser){
         if(maybeUser.isLeft()) return Either.left(maybeUser.getLeft());
         if(maybeUser.get().isEmpty()){

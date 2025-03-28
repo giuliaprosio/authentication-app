@@ -1,7 +1,7 @@
 package com.springapplication.userapp.core.domain.application;
 
 import com.springapplication.userapp.core.domain.model.User;
-import com.springapplication.userapp.core.domain.model.error.AdaptersError;
+import com.springapplication.userapp.controller.model.TopTrackDTO;
 import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.core.domain.port.input.DashboardHandler;
 import com.springapplication.userapp.core.domain.port.output.SpotifyGateway;
@@ -24,7 +24,7 @@ class SpotifyDashboardHandler implements DashboardHandler {
     }
 
     @Override
-    public Either<UserError, ArrayList<com.springapplication.userapp.controller.model.TopTrackDTO>> handleSpotifyData(String username){
+    public Either<UserError, ArrayList<TopTrackDTO>> handleSpotifyData(String username){
 
         Either<UserError, Optional<User>> byUsername = Either.narrow(userPersistence.findByUsername(username));
         return byUsername
@@ -33,6 +33,4 @@ class SpotifyDashboardHandler implements DashboardHandler {
                     return spotifyGateway.getTopTracks(user.get(), 10);
                 });
     }
-
-
 }
