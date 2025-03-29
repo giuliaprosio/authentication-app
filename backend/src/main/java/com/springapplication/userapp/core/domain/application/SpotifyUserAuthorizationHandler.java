@@ -2,7 +2,6 @@ package com.springapplication.userapp.core.domain.application;
 
 import com.springapplication.userapp.client.model.AuthTokenDTO;
 import com.springapplication.userapp.core.domain.model.User;
-import com.springapplication.userapp.core.domain.model.error.AdaptersError;
 import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.core.domain.port.input.UserAuthorizationHandler;
 import com.springapplication.userapp.core.domain.port.output.SpotifyGateway;

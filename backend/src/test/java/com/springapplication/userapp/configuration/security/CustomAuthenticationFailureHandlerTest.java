@@ -1,6 +1,5 @@
 package com.springapplication.userapp.configuration.security;
 
-import com.springapplication.userapp.configuration.security.CustomAuthenticationFailureHandler;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.Test;

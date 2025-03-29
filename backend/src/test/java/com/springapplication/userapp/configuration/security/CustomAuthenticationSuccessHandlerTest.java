@@ -1,6 +1,5 @@
 package com.springapplication.userapp.configuration.security;
 
-import com.springapplication.userapp.configuration.security.CustomAuthenticationSuccessHandler;
 import com.springapplication.userapp.providers.token.TokenService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;

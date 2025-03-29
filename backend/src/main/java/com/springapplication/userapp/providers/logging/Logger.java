@@ -2,8 +2,6 @@ package com.springapplication.userapp.providers.logging;
 
 public sealed interface Logger permits MDCLogger {
 
-    void debug(String message, Object... args);
-
     void info(String message, Object... args);
 
     void warn(String message, Object... args);
@@ -17,11 +15,6 @@ public sealed interface Logger permits MDCLogger {
 }
 
 record MDCLogger(org.slf4j.Logger logger) implements Logger {
-
-    @Override
-    public void debug(String message, Object... args) {
-        logger.debug(message, args);
-    }
 
     @Override
     public void info(String message, Object... args) {
