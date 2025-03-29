@@ -6,7 +6,7 @@ import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.core.domain.port.output.SpotifyGateway;
 import com.springapplication.userapp.providers.logging.Logger;
 import com.springapplication.userapp.providers.logging.LoggerFactory;
-import com.springapplication.userapp.providers.token.TokenCacheProvider;
+import com.springapplication.userapp.providers.cache.CacheProvider;
 import io.vavr.control.Either;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -20,31 +20,29 @@ import com.springapplication.userapp.client.model.AuthTokenDTO;
 import com.springapplication.userapp.client.model.TotalObjectDTO;
 import com.springapplication.userapp.client.model.TopTracksSpotifyResponseDTO;
 import reactor.core.publisher.Mono;
-import com.springapplication.userapp.client.model.MusicBrainzDTO;
-import com.springapplication.userapp.providers.countryISO.CountryISOCache;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 @Component
-public class SpotifyApiGateway implements SpotifyGateway {
+class SpotifyApiGateway implements SpotifyGateway {
 
     private final ClientBuilder clientBuilder;
     private final Cache<String, String> tokenCache;
     private final String clientId;
-    private final CountryISOCache countryISOCache;
-    private final HashMap<String, ArrayList<TopTrackDTO>> topTracksCache;
+    private final MusicBrainzApiGateway musicBrainzApiGateway;
+    private final Cache<String, ArrayList<TopTrackDTO>> topTracksCache;
 
     private final Logger logger = LoggerFactory.getLogger(SpotifyApiGateway.class);
 
 
-    public SpotifyApiGateway(ClientBuilder clientBuilder, TokenCacheProvider tokenCacheProvider,
-                             @Value("${my.client.id}") String clientId, CountryISOCache countryISOCache) {
+    public SpotifyApiGateway(ClientBuilder clientBuilder, CacheProvider cacheProvider,
+                             @Value("${my.client.id}") String clientId, MusicBrainzApiGateway musicBrainzApiGateway) {
         this.clientBuilder = clientBuilder;
-        this.tokenCache = tokenCacheProvider.generateCache();
+        this.tokenCache = cacheProvider.generateTokenCache();
         this.clientId = clientId;
-        this.countryISOCache = countryISOCache;
-        this.topTracksCache = new HashMap<>();
+        this.musicBrainzApiGateway = musicBrainzApiGateway;
+        this.topTracksCache = cacheProvider.generateTracksCache();
     }
 
     @Override
@@ -55,9 +53,10 @@ public class SpotifyApiGateway implements SpotifyGateway {
     @Override
     public Either<UserError, ArrayList<TopTrackDTO>> getTopTracks(User user, int howMany) {
 
-        if(topTracksCache.containsKey(user.getUsername())){
-            return Either.right(topTracksCache.get(user.getUsername()));
-        }
+        var tracks = topTracksCache.getIfPresent(user.getUsername());
+
+        if(tracks != null) return Either.right(tracks);
+
         var maybeTopTrack = spotifyTopArtistsRequest(user, howMany);
         if(maybeTopTrack.isRight()){
             topTracksCache.put(user.getUsername(), maybeTopTrack.get());
@@ -77,10 +76,10 @@ public class SpotifyApiGateway implements SpotifyGateway {
 
         for(int i = 0; i < howMany; i++){
             var artistId = dto.getItems().get(i).getId();
-            var maybeCountry = syncTotalObject(artistId, user).flatMap(this::getArtistCountry);
+            var maybeCountry = syncTotalObject(artistId, user).flatMap(musicBrainzApiGateway::getArtistCountry);
             if(maybeCountry.isRight()) topTrackDTOs.add(maybeCountry.get());
 
-            try {Thread.sleep(1000);} catch (Exception e){
+            try {Thread.sleep(500);} catch (Exception e){
                 logger.error("Failed to call Spotify API for thread sleep error", e);
             }
         }
@@ -88,40 +87,10 @@ public class SpotifyApiGateway implements SpotifyGateway {
         return Either.right(topTrackDTOs);
     }
 
-    private Either<UserError, TopTrackDTO> getArtistCountry(TotalObjectDTO dto){
-        var topTrackDTO = new TopTrackDTO();
-        topTrackDTO.setName(dto.getName());
-        String artistName = dto.getArtists().get(0).getName();
-        topTrackDTO.setArtist(artistName);
-        topTrackDTO.setImg(dto.getAlbum().getImages().get(1).getUrl());
-
-        var maybeCountry = syncMusicBrainz(artistName);
-
-        return maybeCountry
-                .flatMap(country -> {
-                    var iso = setCountryISO(country);
-                    if(iso.isLeft()) return Either.left(iso.getLeft());
-                    topTrackDTO.setCountry(iso.get());
-                    return Either.right(topTrackDTO);
-                });
-
-    }
-
-    private Either<UserError, String> setCountryISO(String country){
-        String iso = countryISOCache.getISOFromCountry(country);
-        if(iso == null){
-            logger.error("No ISO for country name: " + country);
-            var error = new UserError.GenericError("No ISO for country name: " + country);
-            return Either.left(error);
-        }
-
-        return Either.right(iso);
-    }
-
     private Mono<Either<UserError, AuthTokenDTO>> authorizationRequest(String code, String state, String redirect_uri){
         return authorizationRequestBuilder(code, state, redirect_uri)
                 .map(response -> {
-                    if(response == null) return Either.left(new UserError.GenericError("Error in calling Spotify API"));
+                    if(response == null || response.getAccessToken() == null) return Either.left(new UserError.GenericError("Error in calling Spotify API"));
                     tokenCache.put(state, response.getAccessToken());
 
                     return Either.right(response);
@@ -157,34 +126,6 @@ public class SpotifyApiGateway implements SpotifyGateway {
 
     private Either<UserError, TotalObjectDTO> syncTotalObject(String id, User user){
         return getFinalObject(id, user).block();
-    }
-
-    private Either<UserError, String> syncMusicBrainz(String artist){
-        return getCountrySync(artist).block();
-    }
-
-    private Mono<Either<UserError, String>> getCountrySync(String artist){
-        return getArtistCountryDto(artist)
-                .flatMap(dto -> {
-                    var country = dto.getArtists().get(0).getArea().getName();
-                    if(country == null){
-                        var error = new UserError.GenericError("Error parsing Music Brainz");
-                        logger.warn("Error parsing Music Brainz json");
-                        return Mono.just(Either.left(error));
-                    }
-                    return Mono.just(Either.right(country));
-                });
-    }
-
-    private Mono<MusicBrainzDTO> getArtistCountryDto(String artist){
-        WebClient musicBrainzClient = clientBuilder.buildClient("/artist", "musicBrainz");
-
-        return musicBrainzClient.get()
-                .uri(uriBuilder -> uriBuilder.queryParam("query", artist)
-                        .queryParam("fmt", "json")
-                        .build())
-                .retrieve()
-                .bodyToMono(MusicBrainzDTO.class);
     }
 
     private Mono<Either<UserError, TopTracksSpotifyResponseDTO>> spotifyTopTracksRequest(User user, int howMany){

@@ -10,7 +10,7 @@ import java.util.Base64;
 import java.util.HashMap;
 
 @Component
-public class ClientBuilder {
+class ClientBuilder {
 
     private final HashMap<String, String> apiCallType = new HashMap<>();
     private final String header;
