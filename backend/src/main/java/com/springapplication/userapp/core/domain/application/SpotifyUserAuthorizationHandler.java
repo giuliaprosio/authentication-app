@@ -90,7 +90,6 @@ class SpotifyUserAuthorizationHandler implements UserAuthorizationHandler {
         updatedUser.setPassword(user.getPassword());
         updatedUser.setId(user.getId());
         updatedUser.setRefreshToken(dto.getRefreshToken());
-        updatedUser.setAccessToken(dto.getAccessToken());
         logger.info("Updated user: " + updatedUser.getUsername());
         return Either.right(updatedUser);
     }

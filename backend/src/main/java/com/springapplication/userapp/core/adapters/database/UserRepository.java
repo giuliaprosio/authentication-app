@@ -16,7 +16,9 @@ import org.springframework.stereotype.Repository;
 import io.vavr.control.Try;
 
 
+import java.nio.ByteBuffer;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class UserRepository implements UserPersistence, UserDetailsService {
@@ -51,10 +53,10 @@ public class UserRepository implements UserPersistence, UserDetailsService {
 
     @Override
     public Either<AdaptersError, User> save(User user) {
-
-        String sql = "INSERT INTO users_table (id, username, email, password, refresh_token, access_token) " +
-                "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO users_table (id, username, email, password, refresh_token) " +
+                "VALUES (?, ?, ?, ?, ?)";
         logger.info("Saving new user or updating a new one");
+
         return Try.of(() -> unsafeInsert(sql, user))
                 .toEither()
                 .mapLeft(this::mapError);
@@ -83,12 +85,11 @@ public class UserRepository implements UserPersistence, UserDetailsService {
     private User unsafeInsert(String sql, User user){
         jdbcTemplate.update(
             sql,
-            user.getId(),
+            uuidToBytes(user.getId()),
             user.getUsername(),
             user.getEmail(),
             user.getPassword(),
-            user.getRefreshToken(),
-            user.getAccessToken());
+            user.getRefreshToken());
         return user;
     }
 
@@ -109,10 +110,10 @@ public class UserRepository implements UserPersistence, UserDetailsService {
 
         if(databaseUser.isPresent()){
             var user = new User();
+            user.setId(bytesToUUID(databaseUser.get().id()));
             user.setUsername(databaseUser.get().username());
             user.setEmail(databaseUser.get().email());
             user.setPassword(databaseUser.get().password());
-            user.setAccessToken(databaseUser.get().access_token());
             user.setRefreshToken(databaseUser.get().refresh_token());
             return Optional.of(user);
         }
@@ -120,11 +121,24 @@ public class UserRepository implements UserPersistence, UserDetailsService {
     }
 
     private record DatabaseUser(
-            Long id,
+            byte[] id,
             String username,
             String email,
             String password,
-            String access_token,
             String refresh_token
     ){}
+
+    private byte[] uuidToBytes(UUID uuid) {
+        ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
+        bb.putLong(uuid.getMostSignificantBits());
+        bb.putLong(uuid.getLeastSignificantBits());
+        return bb.array();
+    }
+
+    private UUID bytesToUUID(byte[] bytes) {
+        ByteBuffer bb = ByteBuffer.wrap(bytes);
+        long high = bb.getLong();
+        long low = bb.getLong();
+        return new UUID(high, low);
+    }
 }

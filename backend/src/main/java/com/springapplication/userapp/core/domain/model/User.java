@@ -1,45 +1,26 @@
 package com.springapplication.userapp.core.domain.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.UUID;
 
-@Table(name = "users_table")
 public class User implements UserDetails {
 
-    public Integer getId() {
+    private UUID id;
+    private String username;
+    private String email;
+    private String password;
+    private String refreshToken;
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Column(nullable = false, unique = true)
-    private Integer id;
-
-    @Column(nullable = false, unique = true)
-    @NotNull
-    private String username;
-
-    @Column(nullable = false, unique = true)
-    @NotNull
-    private String email;
-
-    @Column(nullable = false)
-    @NotNull
-    private String password;
-
-    @Column
-    private String refreshToken;
-
-    @Column
-    private String accessToken;
+    public void setId(UUID id) { this.id = id; }
 
     public String getUsername() {
         return username;
@@ -68,10 +49,6 @@ public class User implements UserDetails {
     public String getRefreshToken() {
         return refreshToken;
     }
-
-    public String getAccessToken() {return accessToken; }
-
-    public void setAccessToken(String accessToken) {this.accessToken = accessToken;}
 
     public void setRefreshToken(String refresh_token) {
         this.refreshToken = refresh_token;
