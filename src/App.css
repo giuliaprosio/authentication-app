@@ -92,17 +92,37 @@
 }
 
 .home-card {
-  background-color: rgba(255, 255, 255, 0.1);  
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto 1fr 1fr;
+  grid-gap: 1rem;
+  grid-template-areas:
+    "title  title"
+    "map    chart"
+    "cards  cards";
+  width: 100%;              
+  max-width: 1600px;        
+  margin: 0 auto;           
+  padding: 1rem;
+  background-color: rgba(255,255,255,0.1);
   border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease;
-  width: 1050px;
-  height: 700px;
+  box-shadow: 0 10px 20px rgba(45, 25, 25, 0.2);
+}
+
+.home-card > div {
+  border: 1px solid rgba(255,255,255,0.2);
+  padding: 0.5rem;
+  overflow: hidden;
 }
 
 .home-card:hover {
-  transform: scale(1.02);
+  transform: scale(1.01);
+}
+
+.home-card .card-header {
+  grid-area: title;
+  border: none;           
+  padding-bottom: 0;
 }
 
 .card-header {

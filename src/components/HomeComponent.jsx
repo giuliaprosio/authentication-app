@@ -58,7 +58,7 @@ const HomeComponent = () => {
             try {
                 const response = await axiosConfig.redirect(params);
                 if (response.status === 200) {
-                    navigate("home/spotify/data", {
+                    navigate("dashboard/spotify/data", {
                         state: {
                             username: username,
                         }
@@ -78,7 +78,7 @@ const HomeComponent = () => {
                 <h2>Hello, {username}!</h2>
                 <h3>Analytics Dashboard</h3>
                 <button className="btn btn-connect" id="connectToSpotifty" onClick={handleConnect}>
-                    <img src="src/img/spotify-logo-png-7069.png" alt="Logo" />
+                    <img src="./img/spotify-logo-png-7069.png" alt="Logo" />
                     &emsp;Connect to Spotify</button>
                 {message && (
                     <div>
