@@ -164,4 +164,51 @@ public class SpotifyApiGatewayTest {
         assertEquals(1, result.get().size());
         assertEquals(topTrackDTO, result.get().get(0));
     }
+
+    @Test
+    void givenValidUserWithoutToken_whenGetTracks_thenReturnTracks() {
+        User user = UserObjectMother.createValidUser();
+        ArrayList<TopTrackDTO> mockTracks = new ArrayList<>();
+        var trackDTO = new TopTrackDTO();
+        mockTracks.add(trackDTO);
+        var tracksResponseDTO = DTOsObjectMother.createValidSpotifyTracksResponseDTO();
+        var totalResponseDTO = DTOsObjectMother.createValidTotalObjectDTO();
+
+        var topTrackDTO = DTOsObjectMother.createValidTopTrackDTO();
+        var authTokenDTO = DTOsObjectMother.createValidAuthTokenDTO();
+
+        WebClient webClientMock = mock(WebClient.class);
+        WebClient.RequestHeadersUriSpec requestHeadersSpecMock = mock(WebClient.RequestHeadersUriSpec.class);
+        WebClient.ResponseSpec responseSpecMock = mock(WebClient.ResponseSpec.class);
+        WebClient.RequestBodyUriSpec requestBodyUriSpecMock = mock(WebClient.RequestBodyUriSpec.class);
+        WebClient.RequestBodySpec requestBodySpecMock = mock(WebClient.RequestBodySpec.class);
+
+        when(clientBuilder.buildClient("/top/tracks?time_range=medium_term&limit=1&offset=0", "user_analytics")).thenReturn(webClientMock);
+        when(webClientMock.get()).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.header(anyString(), anyString())).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(TopTracksSpotifyResponseDTO.class)).thenReturn(Mono.just(tracksResponseDTO));
+
+        when(clientBuilder.buildClient("/api/token", "auth")).thenReturn(webClientMock);
+        when(webClientMock.post()).thenReturn(requestBodyUriSpecMock);
+        when(requestBodyUriSpecMock.contentType(any())).thenReturn(requestBodySpecMock);
+        when(requestBodySpecMock.body(any(BodyInserters.FormInserter.class))).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(AuthTokenDTO.class)).thenReturn(Mono.just(authTokenDTO));
+
+
+        when(clientBuilder.buildClient("/tracks/id", "analytics")).thenReturn(webClientMock);
+        when(webClientMock.get()).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.header(anyString(), anyString())).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(TotalObjectDTO.class)).thenReturn(Mono.just(totalResponseDTO));
+
+        when(musicBrainzApiGateway.getArtistCountry(totalResponseDTO)).thenReturn(Either.right(topTrackDTO));
+
+        Either<UserError, ArrayList<TopTrackDTO>> result = spotifyApiGateway.getTopTracks(user, 1);
+
+        assertTrue(result.isRight());
+        assertEquals(1, result.get().size());
+        assertEquals(topTrackDTO, result.get().get(0));
+    }
 }

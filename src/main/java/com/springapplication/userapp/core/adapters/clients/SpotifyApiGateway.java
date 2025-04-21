@@ -22,7 +22,6 @@ import com.springapplication.userapp.client.model.TopTracksSpotifyResponseDTO;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 @Component
 class SpotifyApiGateway implements SpotifyGateway {

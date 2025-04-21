@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.springapplication.userapp.controller.model.NewUserDTO;
 
 import java.util.Random;
+import java.util.UUID;
 
 @Component
 class RegisterMapper {
@@ -18,14 +19,11 @@ class RegisterMapper {
 
     public Either<UserError, User>  mapper(NewUserDTO userDTO) {
 
-        // FIX: instead of this, create database versioning (flyway)
-        // so that I have automated primary key generation in the database
         User user = new User();
-        user.setId(new Random().nextInt());
+        user.setId(UUID.randomUUID());
         user.setUsername(userDTO.getUsername());
         user.setEmail(userDTO.getEmail());
         user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-
         return Either.right(user);
 
     }

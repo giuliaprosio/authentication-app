@@ -4,6 +4,7 @@ import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.providers.countryISO.CountryISOCache;
 import com.springapplication.userapp.providers.logging.Logger;
 import com.springapplication.userapp.providers.logging.LoggerFactory;
+import com.springapplication.userapp.client.model.MusicBrainzDTO;
 import io.vavr.control.Either;
 import org.springframework.stereotype.Component;
 import com.springapplication.userapp.controller.model.TopTrackDTO;
@@ -60,17 +61,20 @@ class MusicBrainzApiGateway {
     private Mono<Either<UserError, String>> getCountrySync(String artist){
         return getArtistCountryDto(artist)
                 .flatMap(dto -> {
-                    var country = dto.getArtists().get(0).getArea().getName();
-                    if(country == null){
+                    if(dto == null ||
+                            dto.getArtists() == null ||
+                            dto.getArtists().get(0).getArea() == null ||
+                            dto.getArtists().get(0).getArea().getName() == null){
                         var error = new UserError.GenericError("Error parsing Music Brainz");
                         logger.warn("Error parsing Music Brainz json");
                         return Mono.just(Either.left(error));
                     }
-                    return Mono.just(Either.right(country));
+
+                    return Mono.just(Either.right(dto.getArtists().get(0).getArea().getName()));
                 });
     }
 
-    private Mono<com.springapplication.userapp.client.model.MusicBrainzDTO> getArtistCountryDto(String artist){
+    private Mono<MusicBrainzDTO> getArtistCountryDto(String artist){
         WebClient musicBrainzClient = clientBuilder.buildClient("/artist", "musicBrainz");
 
         return musicBrainzClient.get()
