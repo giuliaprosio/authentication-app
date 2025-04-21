@@ -6,16 +6,17 @@ import RegisterComponent from "./RegisterComponent";
 import SpotifyCountriesComponent from "./SpotifyCountriesComponent"; 
 import axiosConfig from "../api/axiosConfig";
 
+
 const ProxyRequestComponent = () => {
     const [component, setComponent] = useState(null);
     const navigate = useNavigate();
     const location = useLocation();
 
     const componentMap = {
-        home: <HomeComponent />,
-        login: <LoginComponent />,
-        register: <RegisterComponent />,
-        "dashboard/spotify/data": <SpotifyCountriesComponent/>
+        "/home": <HomeComponent />,
+        "/login": <LoginComponent />,
+        "/register": <RegisterComponent />,
+        "/dashboard/spotify/data": <SpotifyCountriesComponent/>
         };
 
     useEffect(() => {
@@ -24,9 +25,8 @@ const ProxyRequestComponent = () => {
             try {
                 let uri = location.pathname; 
                 const response = await axiosConfig.request(uri);
-                
-                if (typeof response.data === "string" && componentMap[response.data]) {
-                    setComponent(componentMap[response.data]);
+                if (typeof response.data === "string" && componentMap["/" + response.data]) {
+                    setComponent(componentMap["/" + response.data]);
                 } else {
                     navigate("/login");
                 }
