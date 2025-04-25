@@ -7,6 +7,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.springapplication.userapp.core.adapters.database.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -30,6 +31,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 class WebSecurityConfig implements WebMvcConfigurer {
 
     private final RsaKeyProperties jwtConfigProperties;
+
+    @Autowired
+    private ForwardingAuthenticationEntryPoint forwardingAuthenticationEntryPoint;
 
     public WebSecurityConfig(RsaKeyProperties jwtConfigProperties) {
         this.jwtConfigProperties = jwtConfigProperties;
@@ -68,6 +72,9 @@ class WebSecurityConfig implements WebMvcConfigurer {
                             .successHandler(successHandler)
                             .failureHandler(new CustomAuthenticationFailureHandler())
                         )
+            .exceptionHandling(ex -> ex
+                    .authenticationEntryPoint(forwardingAuthenticationEntryPoint)
+            )
             .logout(logout -> logout
                     .logoutSuccessUrl("/").permitAll());
         return http.build();
@@ -86,7 +93,7 @@ class WebSecurityConfig implements WebMvcConfigurer {
     }
 
 
-    @Override
+   @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins("http://localhost:8080", "http://localhost:5173", "http://localhost:3000")
