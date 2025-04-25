@@ -54,6 +54,24 @@
   box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.3);
 }
 
+.btn-logout {
+  margin-top: 20px; 
+  background-color: #1db954;
+  border-radius: 20px;
+  padding: 10px 20px; 
+  font-size: 16px; 
+  font-weight: bold;
+  backdrop-filter: blur(10px);
+  color: white; 
+  border: 1px solid rgba(29, 285, 84, 0.4); 
+  transition: background 0.3s ease;
+}
+
+.btn-logout:hover {
+  background: rgba(29, 185, 84, 0.5);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
 .btn-toggle-mode {
   margin-bottom: 20px;
   background-color: #1db954; 
@@ -101,7 +119,8 @@
     "map    chart"
     "cards  cards";
   width: 100%;              
-  max-width: 1600px;        
+  max-width: 1200px; 
+  min-width: 800px;       
   margin: 0 auto;           
   padding: 1rem;
   background-color: rgba(255,255,255,0.1);

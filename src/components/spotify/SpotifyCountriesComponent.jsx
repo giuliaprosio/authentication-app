@@ -5,8 +5,10 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContaine
 import 'react-tabs/style/react-tabs.css';
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import LogoutButton from "../auth/LogoutButton";
 
-import axiosConfig from "../api/axiosConfig";
+
+import axiosConfig from "../../api/axiosConfig";
 
 const prepareCountryBarData = (data) => {
     const countryCount = {};
@@ -60,7 +62,7 @@ const SpotifyCountriesComponent = () => {
     useEffect(() => {
         if (!mapRef.current) {
             mapRef.current = L.map("map", {
-                center: [39, -45],
+                center: [39, -39],
                 zoom: 3
             });
 
@@ -123,6 +125,7 @@ const SpotifyCountriesComponent = () => {
 }, [spotifyData]);
 
     return (
+        <div>
         <div className="home-card">
             <div className="card-header text-center">
                 <h2>Hello, {username}!</h2>
@@ -180,7 +183,9 @@ const SpotifyCountriesComponent = () => {
             </div>
         ))}
         </div> 
-            </div>     
+            </div>   
+        </div>
+        <LogoutButton />  
         </div>
     );
 };

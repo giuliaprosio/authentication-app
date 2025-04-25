@@ -72,17 +72,8 @@ const axiosConfig = {
             formData, {
             headers: { "Content-Type": "multipart/form-data" }
         });
-    },
-
-    async request(endpoint, method = "get", data = {}) {
-        const contentType = method === "post" ? "application/json" : "application/x-www-form-urlencoded";
-        return instance({
-            url: "/api" + endpoint,
-            method,
-            data: contentType === "application/json" ? data : qs.stringify(data),
-            headers: { "Content-Type": contentType },
-        });
-    },
+    }
+    
 };
 
 export default axiosConfig;
