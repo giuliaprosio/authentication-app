@@ -29,14 +29,13 @@ Open [http://localhost:5173](http://localhost:5173) to view it in your browser.
 
 ### `npm run build`
 
-Builds the app for production, creating an optimized bundle in the `dist` folder.\
-The production build is optimized for performance and ready for 
-deployment. 
+Builds the app for production, creating an optimized bundle.\
+I have configured the command to create the build files in the `static` folder of the backend app. This way I can serve the frontend in a 1-tier architecture setup.
 
 ### `npm run serve`
 After building, you have two options for serving the app: 
-1. **Serve directly from the backend server**: copy the contents of the `dist` folder to the `./resources` directory of the backend app. 
-2. **Serve with a separate static server**: in a two-tier architecture (preferred by React), the frontend is served separatedly from the backend. 
+1. **Serve directly from the backend server**: following `npm run build` simply run the backend app to have the frontend served to the user. 
+2. **Serve with a separate static server**: in a two-tier architecture (preferred for React), the frontend is served separatedly from the backend. 
 To serve the frontend separatedly, a possible solution I offer is: 
     1. Install `serve` if you haven't already: 
 
