@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import axiosConfig  from "../api/axiosConfig";
+import axiosConfig  from "../../api/axiosConfig";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const RegisterComponent = () => {
