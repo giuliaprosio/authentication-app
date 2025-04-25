@@ -6,33 +6,59 @@ Once logged in, the communication uses JWT tokens. The
 user can connect to their Spotify account and review
 cool analysis of their listening patterns!
 
-To complete the connection, before building the app (I use IntelliJ), 
-go into the folder 
+To host it locally, after cloning the repo go in
 
 >./src/main/resources/
 
 And create a new file application.properties. 
 
-In the file, write the following code:
+In the file, write the following code. In the subsequent steps I will detail how
+to fill out the various env vars.  
 ```
-spring.application.name=<your_application_name>
+spring.application.name=<app_name>
 
-### DataSource Configuration
-spring.datasource.url=jdbc:mysql://<your_database_source>/<your_MySql_database>
-spring.datasource.username=root
-spring.datasource.password=<db_password>
+# DataSource Configuration
+spring.datasource.url=jdbc:mysql://localhost:3306/<db_name>?serverTimezone=UTC
+# for docker: replace localhost:3306 to mysql
+spring.datasource.username=<username>
+spring.datasource.password=<password>
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 
-### JPA Configuration
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL8Dialect
+# Logging
+logging.level.org.springframework.security=DEBUG
 
-### JWT token 
+spring.devtools.restart.enabled=false
+server.port=9090
+
+# JWT
 rsa.private-key=classpath:certs/private.pem
 rsa.public-key=classpath:certs/public.pem
+
+# state
+state-key=<state_key>
+
+# Spotify client id
+my.client.id=<your_client_id>
+my.client.secret=<your_client_secret>
+
+# redirect uri
+my.redirect.uri=http://localhost:5173/home # if 2-tier architecture (or :9090 with 1-tier)
+
+# spotify user auth redirect
+spotify.redirect.url=https://accounts.spotify.com/authorize?client_id=%s&response_type=%s&redirect_uri=%s&state=%s&scope=%s
+# spotify calls
+spotify.auth=https://accounts.spotify.com
+spotify.user.analytics=https://api.spotify.com/v1/me
+spotify.analytics=https://api.spotify.com/v1
+
+# Music Brainz
+music-brainz.base.url=https://musicbrainz.org/ws/2
+
+# token cache expiration
+token.cache.ttl=PT55M
 ```
 
-### DataSource Configuration and JPA Configuration
+### DataSource Configuration
 You can either host a database locally on with docker.
 If you will only deploy the application locally, connecting it to a local database 
 will suffice 
@@ -62,6 +88,11 @@ openssl rsa -in keypair.pem -pubout -out public.pem
 openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in keypair.pem -out private.pem
 ```
 
+### Spotify
+In order to finish the setup, you ought to create a [Spotify Web Developer](https://developer.spotify.com/) 
+account. Follow the instructions and then copy `client_id` and `client_secret`
+in the `application.properties` doc. 
+
 ### OpenAPI
 Since I am using OpenAPI to generate the controllers and dtos, it is 
 necessary before running the app to create the classes in `target`. To do so, 
@@ -75,7 +106,7 @@ mvn clean compile
 If you want to run the application with docker, you should run from the terminal
 ```
 spring-boot:build-image
-docker run --network <network_shared_with_db> -p 8080:8080 <app_name>:0.0.1-SNAPSHOT
+docker run --network <network_shared_with_db> -p 9090:9090 <app_name>:0.0.1-SNAPSHOT
 ```
 
 
