@@ -1,6 +1,7 @@
 package com.springapplication.userapp.core.adapters.api;
 
 import com.springapplication.userapp.configuration.security.CustomAuthenticationSuccessHandler;
+import com.springapplication.userapp.configuration.security.ForwardingAuthenticationEntryPoint;
 import com.springapplication.userapp.core.adapters.database.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,13 +19,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(LoginController.class)
 public class LoginControllerTest {
 
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+   @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private ForwardingAuthenticationEntryPoint forwardingAuthenticationEntryPoint;
 
     /**
      * Mock Beans to configure correctly the starting of the application
      */
+
     @MockBean
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     @MockBean
@@ -32,6 +37,7 @@ public class LoginControllerTest {
     /**
      *
      */
+
 
     private static final String ENDPOINT = "/api/login";
 

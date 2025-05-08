@@ -2,6 +2,7 @@ package com.springapplication.userapp.core.adapters.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springapplication.userapp.configuration.security.CustomAuthenticationSuccessHandler;
+import com.springapplication.userapp.configuration.security.ForwardingAuthenticationEntryPoint;
 import com.springapplication.userapp.core.adapters.database.UserRepository;
 import com.springapplication.userapp.core.domain.model.User;
 import com.springapplication.userapp.core.domain.model.error.UserError;
@@ -34,6 +35,9 @@ public class RegisterControllerTest {
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private ForwardingAuthenticationEntryPoint forwardingAuthenticationEntryPoint;
 
     @MockBean
     RegisterValidator registerValidator;

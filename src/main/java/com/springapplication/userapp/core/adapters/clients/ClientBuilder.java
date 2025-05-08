@@ -13,6 +13,7 @@ import java.util.HashMap;
 class ClientBuilder {
 
     private final HashMap<String, String> apiCallType = new HashMap<>();
+    private final String email;
     private final String header;
 
     ClientBuilder(@Value("${spotify.auth}") String authUrl,
@@ -20,12 +21,14 @@ class ClientBuilder {
                   @Value("${spotify.analytics}") String analyticsUrl,
                   @Value("${my.client.id}") String client_id,
                   @Value("${my.client.secret}") String client_secret,
+                  @Value("${email}") String email,
                   @Value("${music-brainz.base.url}") String musicBrainzUrl) {
         apiCallType.put("auth", authUrl);
         apiCallType.put("user_analytics", userAnalyticsUrl);
         apiCallType.put("analytics", analyticsUrl);
         apiCallType.put("musicBrainz", musicBrainzUrl);
         header = Base64.getEncoder().encodeToString(String.format(client_id + ":" + client_secret).getBytes());
+        this.email = email;
     }
 
     public WebClient buildClient(String uri, String type) {
@@ -38,7 +41,7 @@ class ClientBuilder {
             return WebClient.builder()
                     .baseUrl(apiCallType.get(type) + uri)
                     .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
-                    .defaultHeader(HttpHeaders.USER_AGENT, "MyMusicApp/1.0 giulia.prosio@gmail.com")
+                    .defaultHeader(HttpHeaders.USER_AGENT, String.format("MyMusicApp/1.0 %s", email))
                     .build();
 
         } else if(apiCallType.containsKey(type)){

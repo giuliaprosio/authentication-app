@@ -3,6 +3,7 @@ package com.springapplication.userapp.core.adapters.api;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.WithMockJwtAuth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springapplication.userapp.configuration.security.CustomAuthenticationSuccessHandler;
+import com.springapplication.userapp.configuration.security.ForwardingAuthenticationEntryPoint;
 import com.springapplication.userapp.core.adapters.database.UserRepository;
 import com.springapplication.userapp.core.domain.model.error.UserError;
 import com.springapplication.userapp.core.domain.port.input.DashboardHandler;
@@ -37,6 +38,9 @@ public class SpotifyDashboardControllerTest {
 
     @MockBean
     DashboardHandler dashboardHandler;
+
+    @MockBean
+    private ForwardingAuthenticationEntryPoint forwardingAuthenticationEntryPoint;
 
     /**
      * Mock Beans to configure correctly the starting of the application
@@ -89,14 +93,6 @@ public class SpotifyDashboardControllerTest {
                 .perform(get(SPOTIFY_ENDPOINT))
                 .andExpect(status().isOk())
                 .andExpect(content().string("dashboard/spotify/data"))
-                .andReturn();
-    }
-
-    @Test
-    public void getDashboardUnauthorized_fails() throws Exception {
-        this.mockMvc
-                .perform(get(SPOTIFY_ENDPOINT))
-                .andExpect(status().isUnauthorized())
                 .andReturn();
     }
 

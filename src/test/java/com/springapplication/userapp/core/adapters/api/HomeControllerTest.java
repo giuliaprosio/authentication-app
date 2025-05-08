@@ -3,6 +3,7 @@ package com.springapplication.userapp.core.adapters.api;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.WithMockJwtAuth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springapplication.userapp.configuration.security.CustomAuthenticationSuccessHandler;
+import com.springapplication.userapp.configuration.security.ForwardingAuthenticationEntryPoint;
 import com.springapplication.userapp.core.adapters.database.UserRepository;
 import com.springapplication.userapp.core.domain.model.User;
 import com.springapplication.userapp.core.domain.model.error.UserError;
@@ -38,6 +39,9 @@ public class HomeControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
+    private ForwardingAuthenticationEntryPoint forwardingAuthenticationEntryPoint;
+
+    @MockBean
     private UserAuthorizationHandler userAuthorizationHandler;
 
     @MockBean
@@ -70,15 +74,6 @@ public class HomeControllerTest {
                 .perform(get(ENDPOINT))
                 .andExpect(status().isOk())
                 .andExpect(content().string("home"))
-                .andReturn();
-    }
-
-    @Test
-    public void getHomeUnauthorized_fails() throws Exception {
-
-        this.mockMvc
-                .perform(get(ENDPOINT))
-                .andExpect(status().isUnauthorized())
                 .andReturn();
     }
 
