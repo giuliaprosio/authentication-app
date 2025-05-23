@@ -16,15 +16,17 @@ class SpotifyRedirect {
     private final String client_id;
     private final String response_type = "code";
     private final String redirect_uri;
-    private final String scope = "user-read-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative user-top-read user-read-recently-played user-read-private";
+    private final String scope;
     private final CryptoUtils cryptoUtils;
 
     public SpotifyRedirect(
             @Value("${my.client.id}") String client_id,
             @Value("${my.redirect.uri}") String redirect_uri,
+            @Value("spotify.user.scope") String scope,
             CryptoUtils cryptoUtils) {
         this.client_id = client_id;
         this.redirect_uri = redirect_uri;
+        this.scope = scope;
         this.cryptoUtils = cryptoUtils;
     }
 
