@@ -23,6 +23,7 @@ public class SpotifyRedirectTest {
 
     private String client_id;
     private String redirect_uri;
+    private String scope;
 
     private SpotifyRedirect spotifyRedirect;
 
@@ -30,8 +31,9 @@ public class SpotifyRedirectTest {
     void setup(){
         client_id = randomUUID().toString();
         redirect_uri = randomUUID().toString();
+        scope = randomUUID().toString();
 
-        spotifyRedirect = new SpotifyRedirect(client_id, redirect_uri, cryptoUtils);
+        spotifyRedirect = new SpotifyRedirect(client_id, redirect_uri, scope, cryptoUtils);
 
     }
 
@@ -64,5 +66,20 @@ public class SpotifyRedirectTest {
 
         assertTrue(result.isLeft());
         assertEquals(UserError.GenericError.class, result.getLeft().getClass());
+    }
+
+    @Test
+    void givenEncodingScopeError_whenSpotifyRedirect_returnGenericError(){
+        spotifyRedirect = new SpotifyRedirect(client_id, redirect_uri, null, cryptoUtils);
+
+        String state = randomUUID().toString();
+
+        when(cryptoUtils.encrypt(state)).thenReturn(Either.right(null));
+
+        var result = spotifyRedirect.redirect(state);
+
+        assertTrue(result.isLeft());
+        assertEquals(UserError.GenericError.class, result.getLeft().getClass());
+
     }
 }
