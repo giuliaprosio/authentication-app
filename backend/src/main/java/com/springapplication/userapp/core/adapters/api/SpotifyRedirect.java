@@ -22,7 +22,7 @@ class SpotifyRedirect {
     public SpotifyRedirect(
             @Value("${my.client.id}") String client_id,
             @Value("${my.redirect.uri}") String redirect_uri,
-            @Value("spotify.user.scope") String scope,
+            @Value("${spotify.user.scope}") String scope,
             CryptoUtils cryptoUtils) {
         this.client_id = client_id;
         this.redirect_uri = redirect_uri;
