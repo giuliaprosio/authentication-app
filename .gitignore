@@ -32,13 +32,13 @@ build/
 ### VS Code ###
 .vscode/
 
-#src/main/resources/application.properties
-
 #src/main/resources/certs/private.pem
 #src/main/resources/certs/public.pem
 
 src/main/resources/certs/
 src/main/resources/static/
-src/main/resources/application.properties
+src/main/resources/application.txt
+
+.env
 
 target

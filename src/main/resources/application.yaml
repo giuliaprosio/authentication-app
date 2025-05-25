@@ -1,0 +1,47 @@
+spring:
+  application:
+    name: userapp
+  datasource:
+    url: jdbc:mysql://localhost:3306/mydb?serverTimezone=UTC
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  devtools:
+    restart:
+      enabled: false
+
+server:
+  port: 9090
+
+rsa:
+  private-key: classpath:certs/private.pem
+  public-key: classpath:certs/public.pem
+
+my:
+  redirect:
+    uri: http://localhost:5173/home
+  client:
+    id: ${SPOTIFY_CLIENT_ID}
+    secret: ${SPOTIFY_CLIENT_SECRET}
+
+state-key: ${STATE_KEY}
+
+spotify:
+  user:
+    scope: "user-read-playback-state user-read-currently-playing playlist-read-private playlist-read-collaborative user-top-read user-read-recently-played user-read-private"
+    analytics: https://api.spotify.com/v1/me
+  redirect:
+    url: https://accounts.spotify.com/authorize?client_id=%s&response_type=%s&redirect_uri=%s&state=%s&scope=%s
+  auth: https://accounts.spotify.com
+  analytics: https://api.spotify.com/v1
+
+music-brainz:
+  base:
+    url: https://musicbrainz.org/ws/2
+
+email: ${EMAIL}
+
+token:
+  cache:
+    ttl: PT55M
