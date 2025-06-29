@@ -22,10 +22,10 @@ my:
   redirect:
     uri: http://localhost:5173/home
   client:
-    id: ${SPOTIFY_CLIENT_ID}
-    secret: ${SPOTIFY_CLIENT_SECRET}
+    id: ${SPOTIFY_CLIENT_ID:test-id}
+    secret: ${SPOTIFY_CLIENT_SECRET:test-secret}
 
-state-key: ${STATE_KEY}
+state-key: ${STATE_KEY:teststatekey}
 
 spotify:
   user:
@@ -40,7 +40,7 @@ music-brainz:
   base:
     url: https://musicbrainz.org/ws/2
 
-email: ${EMAIL}
+email: ${EMAIL:test-email}
 
 token:
   cache:
