@@ -181,6 +181,11 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
+		</dependency>
+
 		<!-- Music Brainz -->
 		<!-- https://mavenlibs.com/maven/dependency/fm.last/musicbrainz-data -->
 		<dependency>
