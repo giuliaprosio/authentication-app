@@ -1,6 +1,6 @@
 -- liquibase formatted sql
 -- changeset gp:001-create-users-table
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users_table (
     id BINARY(16) NOT NULL PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,

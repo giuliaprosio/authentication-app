@@ -2,8 +2,12 @@ spring:
   test:
     database:
       replace: none
+
   datasource:
-    url: jdbc:mysql://localhost:3306/test_db?serverTimezone=UTC
-    username: test_user
-    password: test_pass
+    url: jdbc:mysql://localhost:3308/test_db?serverTimezone=UTC
+    username: test-user
+    password: test-password
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  liquibase:
+    enabled: true
