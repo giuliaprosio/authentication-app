@@ -54,20 +54,10 @@ thus the need for an `EMAIL` env var.
 To check the safe communication with the Spotify API, a `state` parameter is requested and thus 
 the need for a `STATE_KEY` env var.
 
-### OpenAPI
-Since I am using OpenAPI to generate the controllers and dtos, it is 
-necessary before running the app to create the classes in `target`. To do so, 
-if you use maven
-run the command:
+### Run the app
+If you want to run the application with docker, simply run
 ```
-mvn clean compile
-```
-
-### Run the app with docker
-If you want to run the application with docker, you should run from the terminal
-```
-spring-boot:build-image
-docker run --network <network_shared_with_db> -p 9090:9090 <app_name>:0.0.1-SNAPSHOT
+make up
 ```
 
 
