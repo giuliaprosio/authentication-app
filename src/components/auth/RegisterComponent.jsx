@@ -4,7 +4,6 @@ import axiosConfig  from "../../api/axiosConfig";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const RegisterComponent = () => {
-    const [id, setId] = useState("");
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -14,7 +13,7 @@ const RegisterComponent = () => {
 
     const register = async (e) => {
         e.preventDefault();
-        console.log({ username, email, password, secondPassword });
+        
         const response = await axiosConfig.register({
             username,
             email,
@@ -26,7 +25,6 @@ const RegisterComponent = () => {
             navigate("/login");
         }
 
-        setId("");
         setUsername("");
         setEmail("");
         setPassword("");

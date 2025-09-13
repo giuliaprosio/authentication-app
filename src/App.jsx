@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";  
@@ -8,6 +8,7 @@ import HomeComponent from "./components/home/HomeComponent";
 import SpotifyCountriesComponent from "./components/spotify/SpotifyCountriesComponent";
 import PrivateRoute from "./components/common/PrivateRoute";
 import { AuthProvider } from "./context/AuthContext";
+import LogoutButton from "./components/auth/LogoutButton";
 
 function App() {
     const [isLightMode, setIsLightMode] = useState(false);
@@ -18,12 +19,6 @@ function App() {
         <div className={`App ${isLightMode ? "light-mode" : "dark-mode"}`}>
             <AuthProvider>
             <Router>
-                <div id="buttons">
-                    <button onClick={toggleLightMode} className="btn-toggle-mode">
-                        Switch to {isLightMode ? "Dark" : "Light"} Mode
-                    </button>
-                </div>
-                
                 <Routes>
                     <Route path="/" element={<LoginComponent />} />
                     <Route path="/login" element={<LoginComponent />} />
@@ -32,6 +27,14 @@ function App() {
                     <Route path="/dashboard/spotify/data" element={<PrivateRoute><SpotifyCountriesComponent/></PrivateRoute>} />
                     <Route path="*" element={ <Navigate to="/"/>} />
                 </Routes>
+                <div id="buttons">
+                    <button onClick={toggleLightMode} className="btn-toggle-mode">
+                        Switch to {isLightMode ? "Dark" : "Light"} Mode
+                    </button>
+                    <div>
+                        <LogoutButton />
+                    </div>
+                </div>
             </Router>
             </AuthProvider>   
         </div>

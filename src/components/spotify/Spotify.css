@@ -1,0 +1,26 @@
+.content-grid {
+  display: grid;
+  grid-template-areas:
+    "map chart"
+    "cards cards";
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr auto;
+  width: 145%;
+  height: 100%; 
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.map-container {
+  grid-area: map;
+  height: 100%; 
+  min-height: 300px;
+}
+
+.chart-container {
+  grid-area: chart;
+}
+
+.cards-container {
+  grid-area: cards;
+}

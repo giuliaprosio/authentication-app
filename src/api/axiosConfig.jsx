@@ -1,14 +1,14 @@
 import axios from "axios";
 import qs from "qs";
 
-const API_BASE_URL = "http://localhost:9090";
+const API_BASE_URL = "http://localhost:8080";
 
 const instance = axios.create({
     baseURL: API_BASE_URL,
 });
 
 instance.interceptors.request.use((config) => {
-    const token = localStorage.getItem("jwtToken");
+    const token = localStorage.getItem("jwt");
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
@@ -19,7 +19,7 @@ instance.interceptors.response.use(
     (response) => response,
     (error) => {
         if (error.response && error.response.status === 401) {
-            localStorage.removeItem("jwtToken");
+            localStorage.removeItem("jwt");
             window.location.href = "/login";
         }
         return Promise.reject(error);
@@ -36,7 +36,7 @@ const axiosConfig = {
         );
         if (response.status === 200 && response.headers.authorization) {
             const token = response.headers.authorization.split(" ")[1];
-            localStorage.setItem("jwtToken", token);
+            localStorage.setItem("jwt", token);
         }
         return response;
     },
