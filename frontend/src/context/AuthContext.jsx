@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null); 
 
     useEffect(() => {
-        const token = localStorage.getItem('jwtToken'); 
+        const token = localStorage.getItem('jwt'); 
         if(token){
             const storedUser = localStorage.getItem("username"); 
             setUser(storedUser); 
@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const userIsAuthenticated = () => {
-        let token = localStorage.getItem('jwtToken')
+        let token = localStorage.getItem('jwt')
 
         return !!token; 
     }

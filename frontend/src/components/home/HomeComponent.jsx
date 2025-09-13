@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosConfig from "../../api/axiosConfig";
 import { useAuthRedirect } from "../../hooks/useAuthRedirect";
-import LogoutButton from "../auth/LogoutButton";
+//import LogoutButton from "../auth/LogoutButton";
 
 const HomeComponent = () => {
     const username = localStorage.getItem("username");
     const [message, setMessage] = useState("");
-    const [imageUrl, setImageUrl] = useState("");
+    const [imageUrl] = useState("");
     const navigate = useNavigate();
 
     const handleConnect = async (e) => {
@@ -56,7 +56,7 @@ const HomeComponent = () => {
                 )}
             </div>
         </div>
-        <LogoutButton />
+        
         </div>
     )
 }
