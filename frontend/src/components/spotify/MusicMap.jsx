@@ -14,15 +14,25 @@ const MusicMap = ({ spotifyData }) => {
 
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 23,
-        attribution: '&copy; OpenStreetMap contributors',
+        //attribution: '&copy; OpenStreetMap contributors',
       }).addTo(mapRef.current);
 
+      setTimeout(() => {
+        mapRef.current.invalidateSize();
+      }, 200);
     }
 
     if (spotifyData) {
       fetch("https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json")
         .then(res => res.json())
         .then(geojsonData => {
+
+          mapRef.current.eachLayer((layer) => {
+            if (layer instanceof L.GeoJSON) {
+              mapRef.current.removeLayer(layer);
+            }
+          });
+
           const countryMap = new Map();
 
           spotifyData.forEach(({ artist, country, img, name }) => {
@@ -59,6 +69,8 @@ const MusicMap = ({ spotifyData }) => {
               }
             }
           }).addTo(mapRef.current);
+
+          mapRef.current.invalidateSize();
         });
     }
   }, [spotifyData]);
