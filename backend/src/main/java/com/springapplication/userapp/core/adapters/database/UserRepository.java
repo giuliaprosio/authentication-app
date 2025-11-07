@@ -120,7 +120,7 @@ public class UserRepository implements UserPersistence, UserDetailsService {
         return Optional.empty();
     }
 
-    private record DatabaseUser(
+    protected record DatabaseUser(
             byte[] id,
             String username,
             String email,
@@ -128,14 +128,14 @@ public class UserRepository implements UserPersistence, UserDetailsService {
             String refresh_token
     ){}
 
-    private byte[] uuidToBytes(UUID uuid) {
+    byte[] uuidToBytes(UUID uuid) {
         ByteBuffer bb = ByteBuffer.wrap(new byte[16]);
         bb.putLong(uuid.getMostSignificantBits());
         bb.putLong(uuid.getLeastSignificantBits());
         return bb.array();
     }
 
-    private UUID bytesToUUID(byte[] bytes) {
+    UUID bytesToUUID(byte[] bytes) {
         ByteBuffer bb = ByteBuffer.wrap(bytes);
         long high = bb.getLong();
         long low = bb.getLong();

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,4 +51,63 @@ public class UserRepositoryIntegrationTest {
         assertEquals(Optional.empty(), result.get());
     }
 
+    @Test
+    void givenUserSaved_whenGetByEmail_thenUserReturned() {
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setUsername("findEmail");
+        user.setEmail("findEmail@test.com");
+        user.setPassword("pass");
+
+        var saved = userRepository.save(user);
+        assertTrue(saved.isRight());
+
+        var result = userRepository.findByEmail("findEmail@test.com");
+
+        assertTrue(result.isRight());
+        assertThat(result.get().get())
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .isEqualTo(user);
+    }
+
+    @Test
+    void givenUserSaved_whenUpdateRefreshToken_thenRefreshTokenUpdated() {
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setUsername("updateTestUser");
+        user.setEmail("update@test.com");
+        user.setPassword("pw");
+
+        userRepository.save(user);
+
+        user.setRefreshToken("newRefreshToken");
+
+        var updated = userRepository.update(user);
+        assertTrue(updated.isRight());
+
+        var result = userRepository.findByUsername("updateTestUser");
+        assertTrue(result.isRight());
+        assertEquals("newRefreshToken", result.get().get().getRefreshToken());
+    }
+
+    @Test
+    void loadUserByUsername_whenUserExists_thenReturnUserDetails() {
+        User user = new User();
+        user.setId(UUID.randomUUID());
+        user.setUsername("loadUser");
+        user.setEmail("load@test.com");
+        user.setPassword("secret");
+
+        userRepository.save(user);
+
+        var details = userRepository.loadUserByUsername("loadUser");
+        assertEquals("loadUser", details.getUsername());
+    }
+
+    @Test
+    void loadUserByUsername_whenUserMissing_thenThrow() {
+        assertThrows(NoSuchElementException.class,
+                () -> userRepository.loadUserByUsername("no_such_user"));
+    }
 }
