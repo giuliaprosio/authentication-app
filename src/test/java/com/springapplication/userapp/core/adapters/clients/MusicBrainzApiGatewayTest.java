@@ -109,4 +109,32 @@ public class MusicBrainzApiGatewayTest {
         assertTrue(result.isLeft());
         assertEquals(error, result.getLeft());
     }
+
+    @Test
+    void givenAreaNameIsNull_whenGetArtistCountry_thenReturnError() {
+        var totalDTO = DTOsObjectMother.createValidTotalObjectDTO();
+        var brainzDTO = DTOsObjectMother.createValidMusicBrainzDTO();
+
+        // Force missing area name → triggers last null-check in getCountrySync
+        brainzDTO.getArtists().get(0).getArea().setName(null);
+
+        var expectedError = new UserError.GenericError("Error parsing Music Brainz");
+
+        WebClient webClientMock = mock(WebClient.class);
+        WebClient.RequestHeadersUriSpec requestHeadersSpecMock = mock(WebClient.RequestHeadersUriSpec.class);
+        WebClient.ResponseSpec responseSpecMock = mock(WebClient.ResponseSpec.class);
+
+        when(clientBuilder.buildClient("/artist", "musicBrainz")).thenReturn(webClientMock);
+        when(webClientMock.get()).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.uri(any(Function.class))).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(com.springapplication.userapp.client.model.MusicBrainzDTO.class)).thenReturn(Mono.just(brainzDTO));
+
+        var result = musicBrainzApiGateway.getArtistCountry(totalDTO);
+
+        assertTrue(result.isLeft());
+        assertEquals(expectedError, result.getLeft());
+        verifyNoInteractions(countryISOCache);
+    }
+
 }
