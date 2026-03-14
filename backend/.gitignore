@@ -41,4 +41,6 @@ src/main/resources/application.txt
 
 .env
 
+LOCALBUILD.md
+
 target
